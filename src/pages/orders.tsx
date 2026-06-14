@@ -77,7 +77,7 @@ export default function OrdersPage() {
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState<string>(ALL)
   const [busyId, setBusyId] = useState<number | null>(null)
-  const [detail, setDetail] = useState<Order | null>(null)
+  const [detailId, setDetailId] = useState<number | null>(null)
   const { data, loading, error, refetch } = useAsync(
     () => listOrders(page, 20, filter === ALL ? undefined : (filter as OrderStatus)),
     [page, filter]
@@ -196,7 +196,7 @@ export default function OrdersPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => setDetail(order)}
+                          onClick={() => setDetailId(order.id)}
                           aria-label="View order"
                         >
                           <EyeIcon />
@@ -218,9 +218,9 @@ export default function OrdersPage() {
       </Card>
 
       <OrderDetailDialog
-        order={detail}
-        onOpenChange={(o) => !o && setDetail(null)}
-        onConfirmed={() => refetch()}
+        orderId={detailId}
+        onOpenChange={(o) => !o && setDetailId(null)}
+        onUpdated={refetch}
       />
     </div>
   )

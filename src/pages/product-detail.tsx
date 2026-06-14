@@ -295,8 +295,7 @@ export default function ProductDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete product?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently remove “{product.name}”. This action cannot
-              be undone.
+              This will remove “{product.name}” from the catalogue.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

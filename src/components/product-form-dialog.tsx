@@ -47,6 +47,9 @@ interface FormState {
   sku: string
   hsn_code: string
   weight: string
+  length: string
+  breadth: string
+  height: string
   category_id: string
   tags: string
   images: string[]
@@ -67,6 +70,9 @@ function emptyForm(): FormState {
     sku: "",
     hsn_code: "",
     weight: "",
+    length: "",
+    breadth: "",
+    height: "",
     category_id: NO_CATEGORY,
     tags: "",
     images: [],
@@ -88,6 +94,9 @@ function fromProduct(p: Product): FormState {
     sku: p.sku ?? "",
     hsn_code: p.hsn_code ?? "",
     weight: p.weight != null ? String(p.weight) : "",
+    length: p.length != null ? String(p.length) : "",
+    breadth: p.breadth != null ? String(p.breadth) : "",
+    height: p.height != null ? String(p.height) : "",
     category_id: p.category_id != null ? String(p.category_id) : NO_CATEGORY,
     tags: (p.tags ?? []).join(", "),
     images: p.images ?? [],
@@ -143,6 +152,9 @@ export function ProductFormDialog({
         sku: form.sku || undefined,
         hsn_code: form.hsn_code || undefined,
         weight: form.weight ? Number(form.weight) : undefined,
+        length: form.length ? Number(form.length) : undefined,
+        breadth: form.breadth ? Number(form.breadth) : undefined,
+        height: form.height ? Number(form.height) : undefined,
         category_id:
           form.category_id === NO_CATEGORY
             ? undefined
@@ -269,6 +281,36 @@ export function ProductFormDialog({
                 step="0.01"
                 value={form.weight}
                 onChange={(e) => set("weight", e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="p-length">Length (cm)</Label>
+              <Input
+                id="p-length"
+                type="number"
+                step="0.1"
+                value={form.length}
+                onChange={(e) => set("length", e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="p-breadth">Breadth (cm)</Label>
+              <Input
+                id="p-breadth"
+                type="number"
+                step="0.1"
+                value={form.breadth}
+                onChange={(e) => set("breadth", e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="p-height">Height (cm)</Label>
+              <Input
+                id="p-height"
+                type="number"
+                step="0.1"
+                value={form.height}
+                onChange={(e) => set("height", e.target.value)}
               />
             </div>
           </div>

@@ -2,8 +2,12 @@ import { api } from "@/lib/api"
 import type { ApiEnvelope } from "@/types/common"
 import type { Category, CategoryCreate, CategoryUpdate } from "@/types/category"
 
-export async function listCategories(): Promise<Category[]> {
-  const { data } = await api.get<ApiEnvelope<Category[]>>("/categories")
+export async function listCategories(
+  includeInactive = true
+): Promise<Category[]> {
+  const { data } = await api.get<ApiEnvelope<Category[]>>("/categories", {
+    params: { include_inactive: includeInactive },
+  })
   return data.data
 }
 

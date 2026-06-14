@@ -7,6 +7,7 @@ import {
   FolderTreeIcon,
   UsersIcon,
   GemIcon,
+  SettingsIcon,
 } from "lucide-react"
 
 import { config } from "@/constants/config"
@@ -27,6 +28,7 @@ const navItems = [
   { title: "Categories", url: "/categories", icon: FolderTreeIcon },
   { title: "Orders", url: "/orders", icon: ShoppingCartIcon },
   { title: "Customers", url: "/users", icon: UsersIcon },
+  { title: "Settings", url: "/settings", icon: SettingsIcon },
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

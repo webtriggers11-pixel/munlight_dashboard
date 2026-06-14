@@ -16,6 +16,7 @@ export interface CategoryCreate {
   image?: string
   parent_id?: number
   sort_order?: number
+  is_active?: boolean
 }
 
 export type CategoryUpdate = Partial<CategoryCreate> & { is_active?: boolean }

@@ -5,7 +5,7 @@ import type {
   Paginated,
   PaginatedEnvelope,
 } from "@/types/common"
-import type { Order, OrderStatusUpdate } from "@/types/order"
+import type { Order, OrderAdmin, OrderStatusUpdate } from "@/types/order"
 
 export async function listOrders(
   page = 1,
@@ -35,16 +35,46 @@ export async function updateOrderStatus(
   return data.data
 }
 
-export async function confirmOrder(orderId: number): Promise<Order> {
-  const { data } = await api.patch<ApiEnvelope<Order>>(
+export async function confirmOrder(orderId: number): Promise<OrderAdmin> {
+  const { data } = await api.patch<ApiEnvelope<OrderAdmin>>(
     `/orders/${orderId}/confirm`
   )
   return data.data
 }
 
-export async function confirmCod(orderId: number): Promise<Order> {
-  const { data } = await api.patch<ApiEnvelope<Order>>(
+export async function confirmCod(orderId: number): Promise<OrderAdmin> {
+  const { data } = await api.patch<ApiEnvelope<OrderAdmin>>(
     `/orders/${orderId}/confirm-cod`
   )
   return data.data
+}
+
+export async function getAdminOrder(orderId: number): Promise<OrderAdmin> {
+  const { data } = await api.get<ApiEnvelope<OrderAdmin>>(
+    `/orders/${orderId}/admin`
+  )
+  return data.data
+}
+
+export async function updateOrderNotes(
+  orderId: number,
+  adminNotes: string
+): Promise<OrderAdmin> {
+  const { data } = await api.patch<ApiEnvelope<OrderAdmin>>(
+    `/orders/${orderId}/notes`,
+    { admin_notes: adminNotes }
+  )
+  return data.data
+}
+
+export async function createShipment(orderId: number): Promise<OrderAdmin> {
+  await api.post(`/orders/${orderId}/shipment`)
+  return getAdminOrder(orderId)
+}
+
+export async function syncShipmentTracking(
+  orderId: number
+): Promise<OrderAdmin> {
+  await api.post(`/orders/${orderId}/shipment/sync`)
+  return getAdminOrder(orderId)
 }

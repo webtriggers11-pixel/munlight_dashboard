@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Select,
@@ -49,6 +50,7 @@ export function CategoryFormDialog({
   const [image, setImage] = useState<string[]>([])
   const [parentId, setParentId] = useState<string>(NO_PARENT)
   const [sortOrder, setSortOrder] = useState("0")
+  const [isActive, setIsActive] = useState(true)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -60,6 +62,7 @@ export function CategoryFormDialog({
       category?.parent_id != null ? String(category.parent_id) : NO_PARENT
     )
     setSortOrder(String(category?.sort_order ?? 0))
+    setIsActive(category?.is_active ?? true)
   }, [open, category])
 
   async function handleSubmit(e: FormEvent) {
@@ -72,6 +75,7 @@ export function CategoryFormDialog({
         image: image[0] || undefined,
         parent_id: parentId === NO_PARENT ? undefined : Number(parentId),
         sort_order: Number(sortOrder),
+        is_active: isActive,
       }
       if (isEdit && category) {
         await updateCategory(category.id, payload)
@@ -155,6 +159,11 @@ export function CategoryFormDialog({
               />
             </div>
           </div>
+
+          <label className="flex items-center gap-3 text-sm">
+            <Switch checked={isActive} onCheckedChange={setIsActive} />
+            Active (visible on storefront)
+          </label>
 
           <DialogFooter>
             <Button
