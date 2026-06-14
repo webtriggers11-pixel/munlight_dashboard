@@ -6,7 +6,7 @@ import { useAsync } from "@/hooks/use-async"
 import { apiErrorMessage } from "@/lib/api"
 import { formatCurrency, formatDate, titleCase } from "@/lib/format"
 import { listOrders, updateOrderStatus } from "@/services/orders"
-import type { OrderStatus } from "@/types/common"
+import type { OrderStatus, PaymentStatus } from "@/types/common"
 import type { Order } from "@/types/order"
 import { Button } from "@/components/ui/button"
 import { PaymentStatusBadge } from "@/components/status-badge"
@@ -30,7 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-const ORDER_STATUSES: OrderStatus[] = [
+const ALL_ORDER_STATUSES: OrderStatus[] = [
   "pending",
   "placed",
   "confirmed",
@@ -42,6 +42,34 @@ const ORDER_STATUSES: OrderStatus[] = [
   "refund_initiated",
   "refunded",
 ]
+
+// Statuses that block payment — cannot confirm
+const PAYMENT_BLOCKED: PaymentStatus[] = ["pending", "failed", "cancelled"]
+
+// Which statuses an admin can manually transition to from a given status.
+// "placed → confirmed" is intentionally excluded — use the /confirm endpoint.
+const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  pending:          ["cancelled"],
+  placed:           ["cancelled"],           // confirm via dedicated button only
+  confirmed:        ["processing", "cancelled"],
+  processing:       ["shipped", "cancelled"],
+  shipped:          ["out_for_delivery"],
+  out_for_delivery: ["delivered"],
+  delivered:        ["refund_initiated"],
+  cancelled:        ["refund_initiated"],
+  refund_initiated: ["refunded"],
+  refunded:         [],
+}
+
+function getAllowedStatuses(order: Order): OrderStatus[] {
+  const base = ALLOWED_TRANSITIONS[order.status] ?? []
+  // If payment is not resolved, block confirm even though placed → confirmed
+  // is already excluded above; also block any forward moves for pending orders
+  if (PAYMENT_BLOCKED.includes(order.payment_status)) {
+    return base.filter((s) => s === "cancelled")
+  }
+  return base
+}
 
 const ALL = "all"
 
@@ -86,7 +114,7 @@ export default function OrdersPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={ALL}>All statuses</SelectItem>
-              {ORDER_STATUSES.map((s) => (
+              {ALL_ORDER_STATUSES.map((s) => (
                 <SelectItem key={s} value={s} className="capitalize">
                   {titleCase(s)}
                 </SelectItem>
@@ -135,28 +163,34 @@ export default function OrdersPage() {
                         {formatCurrency(order.total)}
                       </TableCell>
                       <TableCell>
-                        <Select
-                          value={order.status}
-                          disabled={busyId === order.id}
-                          onValueChange={(v) =>
-                            handleStatusChange(order.id, v as OrderStatus)
-                          }
-                        >
-                          <SelectTrigger size="sm" className="w-full capitalize">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ORDER_STATUSES.map((s) => (
-                              <SelectItem
-                                key={s}
-                                value={s}
-                                className="capitalize"
-                              >
-                                {titleCase(s)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        {(() => {
+                          const next = getAllowedStatuses(order)
+                          const isTerminal = next.length === 0
+                          return (
+                            <Select
+                              value={order.status}
+                              disabled={busyId === order.id || isTerminal}
+                              onValueChange={(v) =>
+                                handleStatusChange(order.id, v as OrderStatus)
+                              }
+                            >
+                              <SelectTrigger size="sm" className="w-full capitalize">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {/* Current status shown as non-selectable label */}
+                                <SelectItem value={order.status} className="capitalize font-medium" disabled>
+                                  {titleCase(order.status)} (current)
+                                </SelectItem>
+                                {next.map((s) => (
+                                  <SelectItem key={s} value={s} className="capitalize">
+                                    {titleCase(s)}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )
+                        })()}
                       </TableCell>
                       <TableCell>
                         <Button
@@ -186,6 +220,7 @@ export default function OrdersPage() {
       <OrderDetailDialog
         order={detail}
         onOpenChange={(o) => !o && setDetail(null)}
+        onConfirmed={() => refetch()}
       />
     </div>
   )

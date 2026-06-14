@@ -1,12 +1,19 @@
+import { useState } from "react"
+import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { formatCurrency, formatDate } from "@/lib/format"
+import { apiErrorMessage } from "@/lib/api"
+import { confirmOrder } from "@/services/orders"
 import type { Order } from "@/types/order"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { RemoteImage } from "@/components/remote-image"
 import { OrderStatusBadge, PaymentStatusBadge } from "@/components/status-badge"
@@ -14,12 +21,37 @@ import { OrderStatusBadge, PaymentStatusBadge } from "@/components/status-badge"
 interface OrderDetailDialogProps {
   order: Order | null
   onOpenChange: (open: boolean) => void
+  onConfirmed?: (updated: Order) => void
 }
 
 export function OrderDetailDialog({
   order,
   onOpenChange,
+  onConfirmed,
 }: OrderDetailDialogProps) {
+  const [confirming, setConfirming] = useState(false)
+
+  async function handleConfirm() {
+    if (!order) return
+    setConfirming(true)
+    try {
+      const updated = await confirmOrder(order.id)
+      toast.success(`Order ${order.order_number} confirmed`)
+      onConfirmed?.(updated)
+      onOpenChange(false)
+    } catch (err) {
+      toast.error(apiErrorMessage(err))
+    } finally {
+      setConfirming(false)
+    }
+  }
+
+  const canConfirm =
+    order?.status === "placed" &&
+    (order.payment_status === "success" ||
+      order.payment_status === "cod_pending" ||
+      order.payment_status === "cod_collected")
+
   return (
     <Dialog open={!!order} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
@@ -112,6 +144,15 @@ export function OrderDetailDialog({
               <p className="text-xs text-muted-foreground">
                 Tracking: {order.courier_name ?? ""} {order.tracking_id}
               </p>
+            )}
+
+            {canConfirm && (
+              <DialogFooter>
+                <Button onClick={handleConfirm} disabled={confirming} className="w-full">
+                  {confirming && <Loader2 className="size-4 animate-spin" />}
+                  Confirm Order
+                </Button>
+              </DialogFooter>
             )}
           </>
         )}

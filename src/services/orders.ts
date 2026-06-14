@@ -35,6 +35,13 @@ export async function updateOrderStatus(
   return data.data
 }
 
+export async function confirmOrder(orderId: number): Promise<Order> {
+  const { data } = await api.patch<ApiEnvelope<Order>>(
+    `/orders/${orderId}/confirm`
+  )
+  return data.data
+}
+
 export async function confirmCod(orderId: number): Promise<Order> {
   const { data } = await api.patch<ApiEnvelope<Order>>(
     `/orders/${orderId}/confirm-cod`
