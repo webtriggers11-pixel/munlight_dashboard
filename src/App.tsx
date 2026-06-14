@@ -6,6 +6,7 @@ import LoginPage from "@/pages/login"
 import DashboardPage from "@/pages/dashboard"
 import OrdersPage from "@/pages/orders"
 import ProductsPage from "@/pages/products"
+import ProductDetailPage from "@/pages/product-detail"
 import CategoriesPage from "@/pages/categories"
 import UsersPage from "@/pages/users"
 
@@ -18,6 +19,7 @@ function App() {
           <Route index element={<DashboardPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="products" element={<ProductsPage />} />
+          <Route path="products/:slug" element={<ProductDetailPage />} />
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="users" element={<UsersPage />} />
         </Route>

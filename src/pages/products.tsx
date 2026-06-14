@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { Loader2, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
+import { Link } from "react-router-dom"
+import { EyeIcon, Loader2, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
 import { toast } from "sonner"
 
 import { useAsync } from "@/hooks/use-async"
@@ -120,7 +121,12 @@ export default function ProductsPage() {
                         />
                       </TableCell>
                       <TableCell className="font-medium">
-                        {product.name}
+                        <Link
+                          to={`/products/${product.slug}`}
+                          className="hover:underline"
+                        >
+                          {product.name}
+                        </Link>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
                         {product.sku ?? "—"}
@@ -142,6 +148,16 @@ export default function ProductsPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            asChild
+                            aria-label="View"
+                          >
+                            <Link to={`/products/${product.slug}`}>
+                              <EyeIcon />
+                            </Link>
+                          </Button>
                           <Button
                             variant="ghost"
                             size="icon"

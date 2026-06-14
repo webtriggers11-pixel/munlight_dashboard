@@ -18,6 +18,11 @@ export async function listProducts(
   }
 }
 
+export async function getProductBySlug(slug: string): Promise<Product> {
+  const { data } = await api.get<ApiEnvelope<Product>>(`/products/${slug}`)
+  return data.data
+}
+
 export async function createProduct(payload: ProductCreate): Promise<Product> {
   const { data } = await api.post<ApiEnvelope<Product>>("/products", payload)
   return data.data
