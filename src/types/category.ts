@@ -1,0 +1,21 @@
+export interface Category {
+  id: number
+  name: string
+  slug: string
+  description: string | null
+  image: string | null
+  parent_id: number | null
+  sort_order: number
+  is_active: boolean
+  created_at: string
+}
+
+export interface CategoryCreate {
+  name: string
+  description?: string
+  image?: string
+  parent_id?: number
+  sort_order?: number
+}
+
+export type CategoryUpdate = Partial<CategoryCreate> & { is_active?: boolean }
