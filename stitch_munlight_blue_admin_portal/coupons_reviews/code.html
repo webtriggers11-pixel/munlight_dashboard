@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LuxAdmin - Content Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#1a1b22",
+                      "on-error-container": "#93000a",
+                      "surface-container-high": "#e8e7f1",
+                      "surface-dim": "#dad9e3",
+                      "on-surface-variant": "#47464a",
+                      "on-surface": "#1a1b22",
+                      "on-primary": "#ffffff",
+                      "secondary": "#5f5e61",
+                      "on-secondary-container": "#656467",
+                      "surface": "#fbf8ff",
+                      "primary-fixed": "#e5e1e4",
+                      "secondary-fixed": "#e4e1e5",
+                      "on-secondary-fixed-variant": "#47464a",
+                      "on-error": "#ffffff",
+                      "outline": "#78767b",
+                      "secondary-container": "#e4e1e5",
+                      "on-tertiary-fixed": "#1f1a1a",
+                      "tertiary-fixed-dim": "#cec4c4",
+                      "primary-fixed-dim": "#c8c6c8",
+                      "on-primary-fixed": "#1c1b1d",
+                      "secondary-fixed-dim": "#c8c6c9",
+                      "error": "#ba1a1a",
+                      "primary": "#000000",
+                      "surface-container-highest": "#e3e1ec",
+                      "on-primary-container": "#858386",
+                      "on-tertiary-container": "#8a8282",
+                      "surface-tint": "#5f5e60",
+                      "on-tertiary": "#ffffff",
+                      "surface-bright": "#fbf8ff",
+                      "on-tertiary-fixed-variant": "#4c4545",
+                      "surface-variant": "#e3e1ec",
+                      "inverse-on-surface": "#f1effa",
+                      "surface-container-low": "#f4f2fd",
+                      "on-primary-fixed-variant": "#474649",
+                      "background": "#fbf8ff",
+                      "tertiary-container": "#1f1a1a",
+                      "primary-container": "#1c1b1d",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary": "#000000",
+                      "outline-variant": "#c8c5ca",
+                      "inverse-primary": "#c8c6c8",
+                      "inverse-surface": "#2f3038",
+                      "on-secondary-fixed": "#1b1b1e",
+                      "tertiary-fixed": "#ebe0df",
+                      "surface-container": "#eeedf7",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "table-cell-py": "0.5rem",
+                      "sidebar-width": "240px",
+                      "element-gap": "0.75rem",
+                      "container-padding": "2rem",
+                      "section-gap": "1.5rem"
+              },
+              "fontFamily": {
+                      "mono": [
+                              "JetBrains Mono"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "h2": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "h3": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-base": [
+                              "Inter"
+                      ],
+                      "h1": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "mono": [
+                              "13px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h2": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "h3": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-base": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h1": [
+                              "30px",
+                              {
+                                      "lineHeight": "36px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Custom scrollbar for drawer */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--tw-colors-outline-variant);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-base min-h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<aside class="bg-surface dark:bg-on-background font-body-sm text-body-sm fixed left-0 top-0 h-full overflow-y-auto flex flex-col docked left-0 h-screen w-[240px] border-r border-outline-variant dark:border-outline flat no shadows z-50">
+<div class="p-6 pb-4">
+<h1 class="font-h2 text-h2 font-bold text-on-surface dark:text-surface-bright">LuxAdmin</h1>
+<p class="text-secondary dark:text-on-secondary-fixed-variant mt-1">Premium Jewellery</p>
+</div>
+<nav class="flex-1 px-4 py-2 space-y-1">
+<!-- Navigation Items mapped via JS logic below -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#" onclick="switchTab('dashboard')">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#" onclick="switchTab('products')">
+<span class="material-symbols-outlined text-[20px]">diamond</span>
+                Products
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#" onclick="switchTab('categories')">
+<span class="material-symbols-outlined text-[20px]">category</span>
+                Categories
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#" onclick="switchTab('orders')">
+<span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+                Orders
+            </a>
+<!-- Active State: Coupons -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container font-medium transition-colors duration-200" href="#" id="nav-coupons" onclick="switchTab('coupons')">
+<span class="material-symbols-outlined text-[20px]">local_offer</span>
+                Coupons
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#" onclick="switchTab('blog')">
+<span class="material-symbols-outlined text-[20px]">article</span>
+                Blog
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#" id="nav-reviews" onclick="switchTab('reviews')">
+<span class="material-symbols-outlined text-[20px]">rate_review</span>
+                Reviews
+                <span class="ml-auto bg-error text-on-error font-mono text-mono px-1.5 rounded-full flex items-center justify-center h-5 min-w-[20px]">12</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#" onclick="switchTab('customers')">
+<span class="material-symbols-outlined text-[20px]">group</span>
+                Customers
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#" onclick="switchTab('admins')">
+<span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+                Admins
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#" onclick="switchTab('reports')">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+                Reports
+            </a>
+<div class="pt-4 mt-4 border-t border-outline-variant dark:border-outline">
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#" onclick="switchTab('settings')">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+                    Settings
+                </a>
+</div>
+</nav>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-[240px] flex flex-col h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background font-label-md text-label-md flex justify-between items-center h-16 px-6 sticky top-0 z-40 border-b border-outline-variant dark:border-outline flat no shadows shrink-0">
+<!-- Search on left -->
+<div class="relative w-96 flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant dark:text-on-secondary-fixed-variant">search</span>
+<input class="w-full bg-surface-container dark:bg-surface-variant text-on-surface dark:text-on-primary border-none rounded-DEFAULT pl-10 pr-4 py-2 focus:ring-1 focus:ring-primary dark:focus:ring-inverse-primary outline-none transition-all duration-150" placeholder="Search orders, customers, products..." type="text"/>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-element-gap">
+<button class="w-8 h-8 flex items-center justify-center rounded-DEFAULT text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container dark:hover:bg-surface-variant transition-all duration-150">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-DEFAULT text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container dark:hover:bg-surface-variant transition-all duration-150 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="h-6 w-px bg-outline-variant dark:bg-outline mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full border border-outline-variant dark:border-outline group-hover:border-primary transition-colors" data-alt="A professional headshot of a person to be used as a tiny UI avatar in an administrative dashboard. The lighting should be neutral and clear, suitable for a dark-mode corporate web application interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLi4ZIBLZskMUX8PPJV588yeUjE3fU_kWVqiHoNzQu1S869RmmnXtRbNUk8sV52S2n1WJtLQDZHySvIvhPexhFOTAKVQNIJl5gql5Yjntb3YOnBy3zGobmxhfwqSDk0sI2xOBuvDQu5YA0HAHLcKrH3wTmQdyhuFNZYtXwsJPi5lH8qStdoO4SY5QfqeGczLs0ozjHW5MEEQfYfm-nCaUNgqmWAXgl4sfmgvyI2prf8Zz991CsLvP7yse-fxVa5I7BlFr_7IojrsE"/>
+<span class="text-secondary dark:text-on-secondary-fixed-variant group-hover:text-primary dark:group-hover:text-inverse-primary transition-colors">Logout</span>
+</div>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto p-container-padding">
+<!-- VIEW: COUPONS (Screen 9) -->
+<div class="flex flex-col gap-section-gap max-w-7xl mx-auto" id="view-coupons-content">
+<!-- Page Header -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-h1 text-h1 text-on-surface dark:text-on-primary">Coupons</h2>
+<p class="font-body-base text-body-base text-secondary dark:text-on-primary-container mt-1">Manage discount codes and promotional campaigns.</p>
+</div>
+<button class="bg-primary dark:bg-inverse-primary text-on-primary dark:text-primary-container hover:opacity-90 font-label-md text-label-md px-4 py-2 rounded-DEFAULT flex items-center gap-2 transition-opacity" onclick="toggleDrawer('add-coupon-drawer')">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Coupon
+                    </button>
+</div>
+<!-- Table Container -->
+<div class="border border-outline-variant dark:border-outline rounded-lg bg-surface dark:bg-surface-container-lowest overflow-x-auto">
+<table class="w-full text-left border-collapse whitespace-nowrap">
+<thead>
+<tr class="border-b border-outline-variant dark:border-outline bg-surface-container-low dark:bg-on-background font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant">
+<th class="px-4 py-3 font-medium">CODE</th>
+<th class="px-4 py-3 font-medium">TYPE</th>
+<th class="px-4 py-3 font-medium">VALUE</th>
+<th class="px-4 py-3 font-medium">MIN ORDER</th>
+<th class="px-4 py-3 font-medium">MAX DISCOUNT</th>
+<th class="px-4 py-3 font-medium">USAGE</th>
+<th class="px-4 py-3 font-medium">EXPIRY</th>
+<th class="px-4 py-3 font-medium">STATUS</th>
+<th class="px-4 py-3 font-medium text-right">ACTION</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface dark:text-on-primary divide-y divide-outline-variant dark:divide-outline">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container dark:hover:bg-surface-variant transition-colors group">
+<td class="px-4 py-table-cell-py font-mono text-mono font-medium">WINTER25</td>
+<td class="px-4 py-table-cell-py"><span class="bg-surface-container-highest dark:bg-surface-tint text-on-surface dark:text-on-primary px-2 py-0.5 rounded-DEFAULT text-[11px] uppercase tracking-wide">Percentage</span></td>
+<td class="px-4 py-table-cell-py">25%</td>
+<td class="px-4 py-table-cell-py text-secondary dark:text-on-primary-container">$1,000</td>
+<td class="px-4 py-table-cell-py text-secondary dark:text-on-primary-container">$500</td>
+<td class="px-4 py-table-cell-py">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container-highest dark:bg-surface-dim rounded-full overflow-hidden">
+<div class="bg-primary dark:bg-inverse-primary h-full w-[45%]"></div>
+</div>
+<span class="text-xs text-secondary">45/100</span>
+</div>
+</td>
+<td class="px-4 py-table-cell-py">Dec 31, 2024</td>
+<td class="px-4 py-table-cell-py">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-dim peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:bg-outline peer-checked:bg-primary dark:peer-checked:bg-inverse-primary"></div>
+</label>
+</td>
+<td class="px-4 py-table-cell-py text-right">
+<button class="text-secondary hover:text-primary dark:hover:text-inverse-primary transition-colors p-1">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container dark:hover:bg-surface-variant transition-colors group">
+<td class="px-4 py-table-cell-py font-mono text-mono font-medium">WELCOME100</td>
+<td class="px-4 py-table-cell-py"><span class="bg-surface-container-highest dark:bg-surface-tint text-on-surface dark:text-on-primary px-2 py-0.5 rounded-DEFAULT text-[11px] uppercase tracking-wide">Fixed</span></td>
+<td class="px-4 py-table-cell-py">$100.00</td>
+<td class="px-4 py-table-cell-py text-secondary dark:text-on-primary-container">$500</td>
+<td class="px-4 py-table-cell-py text-secondary dark:text-on-primary-container">-</td>
+<td class="px-4 py-table-cell-py">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container-highest dark:bg-surface-dim rounded-full overflow-hidden">
+<div class="bg-primary dark:bg-inverse-primary h-full w-[12%]"></div>
+</div>
+<span class="text-xs text-secondary">12/∞</span>
+</div>
+</td>
+<td class="px-4 py-table-cell-py">No Expiry</td>
+<td class="px-4 py-table-cell-py">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-dim peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:bg-outline peer-checked:bg-primary dark:peer-checked:bg-inverse-primary"></div>
+</label>
+</td>
+<td class="px-4 py-table-cell-py text-right">
+<button class="text-secondary hover:text-primary dark:hover:text-inverse-primary transition-colors p-1">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container dark:hover:bg-surface-variant transition-colors group opacity-60">
+<td class="px-4 py-table-cell-py font-mono text-mono font-medium">BFCM2023</td>
+<td class="px-4 py-table-cell-py"><span class="bg-surface-container-highest dark:bg-surface-tint text-on-surface dark:text-on-primary px-2 py-0.5 rounded-DEFAULT text-[11px] uppercase tracking-wide">Percentage</span></td>
+<td class="px-4 py-table-cell-py">40%</td>
+<td class="px-4 py-table-cell-py text-secondary dark:text-on-primary-container">$0</td>
+<td class="px-4 py-table-cell-py text-secondary dark:text-on-primary-container">$2,000</td>
+<td class="px-4 py-table-cell-py">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container-highest dark:bg-surface-dim rounded-full overflow-hidden">
+<div class="bg-outline h-full w-[100%]"></div>
+</div>
+<span class="text-xs text-secondary">500/500</span>
+</div>
+</td>
+<td class="px-4 py-table-cell-py text-error">Expired</td>
+<td class="px-4 py-table-cell-py">
+<label class="relative inline-flex items-center cursor-not-allowed opacity-50">
+<input class="sr-only peer" disabled="" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-surface-dim rounded-full dark:bg-outline after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4"></div>
+</label>
+</td>
+<td class="px-4 py-table-cell-py text-right">
+<button class="text-secondary hover:text-primary dark:hover:text-inverse-primary transition-colors p-1">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="border-t border-outline-variant dark:border-outline px-4 py-3 flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-secondary dark:text-on-primary-container">Showing 1-3 of 42</span>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded-DEFAULT text-secondary hover:bg-surface-container dark:hover:bg-surface-variant disabled:opacity-50"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+<button class="p-1 rounded-DEFAULT text-secondary hover:bg-surface-container dark:hover:bg-surface-variant"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- VIEW: REVIEWS (Screen 10) - Hidden by Default -->
+<div class="hidden flex-col gap-section-gap max-w-7xl mx-auto" id="view-reviews-content">
+<!-- Page Header & Tabs -->
+<div class="flex flex-col gap-4">
+<div>
+<h2 class="font-h1 text-h1 text-on-surface dark:text-on-primary">Reviews Moderation</h2>
+<p class="font-body-base text-body-base text-secondary dark:text-on-primary-container mt-1">Review and manage customer feedback before it appears on the storefront.</p>
+</div>
+<!-- Tabs -->
+<div class="flex items-center gap-6 border-b border-outline-variant dark:border-outline font-label-md text-label-md">
+<button class="pb-3 border-b-2 border-primary dark:border-inverse-primary text-primary dark:text-inverse-primary flex items-center gap-2">
+                            Pending
+                            <span class="bg-error text-on-error font-mono text-mono px-1.5 py-0.5 rounded-full flex items-center justify-center text-[10px] min-w-[20px] leading-none">12</span>
+</button>
+<button class="pb-3 border-b-2 border-transparent text-secondary dark:text-on-secondary-fixed-variant hover:text-on-surface dark:hover:text-on-primary transition-colors">
+                            Approved
+                        </button>
+<button class="pb-3 border-b-2 border-transparent text-secondary dark:text-on-secondary-fixed-variant hover:text-on-surface dark:hover:text-on-primary transition-colors">
+                            Rejected
+                        </button>
+</div>
+</div>
+<!-- Reviews Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-element-gap">
+<!-- Review Card 1 -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg p-5 flex flex-col gap-4 hover:border-outline transition-colors">
+<!-- Card Header: Product & Customer -->
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-DEFAULT bg-surface-container dark:bg-surface-variant shrink-0 border border-outline-variant dark:border-outline overflow-hidden relative">
+<!-- Placeholder used for product image to avoid large base64/SVG -->
+<img alt="Diamond Ring" class="w-full h-full object-cover" data-alt="A professional product shot of a luxury diamond ring resting on a dark slate surface, illuminated by elegant, directional studio lighting to highlight the intricate facets. Monochromatic and sophisticated style fitting a high-end jewelry e-commerce backend interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjEOJyfUdxh-_1tp8LZLdpD89rt1XohCdlMwBziq-0Fg-XgpbnK8X699rm53nmSiDfSc8bJq0F2oHL12y9gReUr8AnO8WivFPeAnf-vQMFhiuqkFUJxuEEvAORvtQeHez-UwFQEDsTj_PZzCmCVF0o6Zwi6I2X76xRWSWrITftXqk2eSBHee57AKX9WpZLFsgHB9zL8xA8GZAKZ6ptbpeL1WIn02cqeQf37nbu_ybdEYc5GSjT06pEHxnp1eaQLF1JudqVTp2yoDM"/>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<span class="font-label-sm text-label-sm text-secondary dark:text-on-primary-container truncate">SKU: RNG-001-D</span>
+<h3 class="font-label-md text-label-md text-on-surface dark:text-on-primary truncate">Solitaire Engagement Ring</h3>
+<div class="flex items-center gap-1 mt-1 text-[#f59e0b]">
+<span class="material-symbols-outlined fill text-[14px]">star</span>
+<span class="material-symbols-outlined fill text-[14px]">star</span>
+<span class="material-symbols-outlined fill text-[14px]">star</span>
+<span class="material-symbols-outlined fill text-[14px]">star</span>
+<span class="material-symbols-outlined text-[14px]">star</span>
+</div>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-px w-full bg-outline-variant dark:bg-outline opacity-50"></div>
+<!-- Review Body -->
+<div class="flex flex-col gap-2 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface dark:text-on-primary font-medium">Sarah Jenkins</span>
+<span class="font-body-sm text-body-sm text-secondary dark:text-on-secondary-container text-[11px]">2 hours ago</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface dark:text-on-primary">Beautiful but slightly large</h4>
+<p class="font-body-sm text-body-sm text-secondary dark:text-on-primary-container line-clamp-3">The diamond is absolutely stunning and the setting is very secure. However, the sizing seems to run about a half size larger than standard. I'll need to get it resized locally.</p>
+</div>
+<!-- Actions -->
+<div class="flex gap-2 mt-2 pt-4 border-t border-outline-variant dark:border-outline border-dashed">
+<button class="flex-1 bg-surface-container dark:bg-surface-variant hover:bg-error-container dark:hover:bg-error/20 text-error hover:text-on-error-container font-label-sm text-label-sm px-3 py-2 rounded-DEFAULT transition-colors">
+                                Reject
+                            </button>
+<button class="flex-1 bg-primary dark:bg-inverse-primary text-on-primary dark:text-primary-container hover:opacity-90 font-label-sm text-label-sm px-3 py-2 rounded-DEFAULT transition-opacity">
+                                Approve
+                            </button>
+</div>
+</div>
+<!-- Review Card 2 -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg p-5 flex flex-col gap-4 hover:border-outline transition-colors">
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-DEFAULT bg-surface-container dark:bg-surface-variant shrink-0 border border-outline-variant dark:border-outline overflow-hidden relative">
+<img alt="Gold Necklace" class="w-full h-full object-cover" data-alt="A professional product shot of an intricate 18k gold chain necklace arranged neatly on a dark velvet surface. The lighting creates subtle highlights on the links, conveying luxury and high build quality suitable for an admin dashboard thumbnail." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCZRr1g8fKPoTv9tq0vxYwFEVhgLotw5_tcF2I_GL2TUiG_FPXYW5wxk6BbUTnAL3IAMJbDOTZQxn1b7bAeqh3d7mNYcuN-jvD3Oie-j1iK29nw92fW2Mwyckgx00umUYj3uA9XJVovk0BHPdIi-paSF7lZtuIYKXbqbXKmBLtuvWpDdRNti_bbykEypbmnEeBwR_7aWWCUnEF1bnKL-dhvE9TLXnVA6OKJ9J79SnmnMO6CXZYLdUwan8fxIN5gAaDndxQ8s_9jgw"/>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<span class="font-label-sm text-label-sm text-secondary dark:text-on-primary-container truncate">SKU: NCK-GLD-18</span>
+<h3 class="font-label-md text-label-md text-on-surface dark:text-on-primary truncate">18k Gold Chain</h3>
+<div class="flex items-center gap-1 text-[#f59e0b]">
+<span class="material-symbols-outlined fill text-[14px]">star</span>
+<span class="material-symbols-outlined fill text-[14px]">star</span>
+<span class="material-symbols-outlined fill text-[14px]">star</span>
+<span class="material-symbols-outlined fill text-[14px]">star</span>
+<span class="material-symbols-outlined fill text-[14px]">star</span>
+</div>
+</div>
+</div>
+<div class="h-px w-full bg-outline-variant dark:bg-outline opacity-50"></div>
+<div class="flex flex-col gap-2 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface dark:text-on-primary font-medium">Michael T.</span>
+<span class="font-body-sm text-body-sm text-secondary dark:text-on-secondary-container text-[11px]">5 hours ago</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface dark:text-on-primary">Exceeded Expectations</h4>
+<p class="font-body-sm text-body-sm text-secondary dark:text-on-primary-container line-clamp-3">Bought this as an anniversary gift. The weight of the gold feels premium and the clasp is very sturdy. Shipping was incredibly fast.</p>
+</div>
+<div class="flex gap-2 mt-2 pt-4 border-t border-outline-variant dark:border-outline border-dashed">
+<button class="flex-1 bg-surface-container dark:bg-surface-variant hover:bg-error-container dark:hover:bg-error/20 text-error hover:text-on-error-container font-label-sm text-label-sm px-3 py-2 rounded-DEFAULT transition-colors">
+                                Reject
+                            </button>
+<button class="flex-1 bg-primary dark:bg-inverse-primary text-on-primary dark:text-primary-container hover:opacity-90 font-label-sm text-label-sm px-3 py-2 rounded-DEFAULT transition-opacity">
+                                Approve
+                            </button>
+</div>
+</div>
+<!-- Review Card 3 -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg p-5 flex flex-col gap-4 hover:border-outline transition-colors border-error/50">
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-DEFAULT bg-surface-container dark:bg-surface-variant shrink-0 border border-outline-variant dark:border-outline flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-outline-variant">image_not_supported</span>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<span class="font-label-sm text-label-sm text-secondary dark:text-on-primary-container truncate">SKU: ERG-PRL-02</span>
+<h3 class="font-label-md text-label-md text-on-surface dark:text-on-primary truncate">Pearl Drop Earrings</h3>
+<div class="flex items-center gap-1 text-[#f59e0b]">
+<span class="material-symbols-outlined fill text-[14px]">star</span>
+<span class="material-symbols-outlined text-[14px]">star</span>
+<span class="material-symbols-outlined text-[14px]">star</span>
+<span class="material-symbols-outlined text-[14px]">star</span>
+<span class="material-symbols-outlined text-[14px]">star</span>
+</div>
+</div>
+</div>
+<div class="h-px w-full bg-outline-variant dark:bg-outline opacity-50"></div>
+<div class="flex flex-col gap-2 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface dark:text-on-primary font-medium">Anonymous</span>
+<span class="font-body-sm text-body-sm text-secondary dark:text-on-secondary-container text-[11px]">1 day ago</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface dark:text-on-primary">Terrible packaging</h4>
+<p class="font-body-sm text-body-sm text-secondary dark:text-on-primary-container line-clamp-3">The earrings are fine but the box was crushed upon arrival. For this price, I expect better presentation. I will not be buying from here again.</p>
+</div>
+<div class="flex gap-2 mt-2 pt-4 border-t border-outline-variant dark:border-outline border-dashed">
+<button class="flex-1 bg-surface-container dark:bg-surface-variant hover:bg-error-container dark:hover:bg-error/20 text-error hover:text-on-error-container font-label-sm text-label-sm px-3 py-2 rounded-DEFAULT transition-colors">
+                                Reject
+                            </button>
+<button class="flex-1 bg-primary dark:bg-inverse-primary text-on-primary dark:text-primary-container hover:opacity-90 font-label-sm text-label-sm px-3 py-2 rounded-DEFAULT transition-opacity">
+                                Approve
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- "Add Coupon" Drawer overlay & panel -->
+<div class="fixed inset-0 z-[100] pointer-events-none flex justify-end" id="add-coupon-drawer">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-black/40 dark:bg-black/60 opacity-0 transition-opacity duration-300" id="drawer-backdrop" onclick="toggleDrawer('add-coupon-drawer')"></div>
+<!-- Panel -->
+<div class="relative w-full max-w-md h-full bg-surface dark:bg-on-background shadow-2xl border-l border-outline-variant dark:border-outline translate-x-full transition-transform duration-300 ease-in-out pointer-events-auto flex flex-col" id="drawer-panel">
+<!-- Drawer Header -->
+<div class="px-6 py-4 border-b border-outline-variant dark:border-outline flex items-center justify-between shrink-0">
+<h3 class="font-h3 text-h3 text-on-surface dark:text-on-primary">Create Coupon</h3>
+<button class="text-secondary hover:text-primary dark:hover:text-inverse-primary p-1 rounded-DEFAULT transition-colors" onclick="toggleDrawer('add-coupon-drawer')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Drawer Body -->
+<div class="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+<!-- Field -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface dark:text-on-primary mb-1.5">Coupon Code <span class="text-error">*</span></label>
+<input class="w-full font-mono text-mono bg-surface-container-lowest dark:bg-on-background border border-outline-variant dark:border-outline rounded-DEFAULT px-3 py-2 text-on-surface dark:text-on-primary focus:ring-2 focus:ring-primary dark:focus:ring-inverse-primary outline-none transition-all uppercase" placeholder="e.g. SUMMER20" type="text"/>
+<p class="font-body-sm text-body-sm text-secondary text-[11px] mt-1">Customers will enter this code at checkout.</p>
+</div>
+<!-- Field Group -->
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface dark:text-on-primary mb-1.5">Discount Type</label>
+<select class="w-full font-body-base text-body-base bg-surface-container-lowest dark:bg-on-background border border-outline-variant dark:border-outline rounded-DEFAULT px-3 py-2 text-on-surface dark:text-on-primary focus:ring-2 focus:ring-primary dark:focus:ring-inverse-primary outline-none transition-all appearance-none">
+<option>Percentage (%)</option>
+<option>Fixed Amount ($)</option>
+<option>Free Shipping</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface dark:text-on-primary mb-1.5">Value</label>
+<input class="w-full font-body-base text-body-base bg-surface-container-lowest dark:bg-on-background border border-outline-variant dark:border-outline rounded-DEFAULT px-3 py-2 text-on-surface dark:text-on-primary focus:ring-2 focus:ring-primary dark:focus:ring-inverse-primary outline-none transition-all" placeholder="20" type="number"/>
+</div>
+</div>
+<div class="h-px w-full bg-outline-variant dark:bg-outline opacity-50"></div>
+<!-- Minimum Requirements -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface dark:text-on-primary mb-3">Requirements</h4>
+<div class="space-y-4">
+<label class="flex items-start gap-3 cursor-pointer">
+<input checked="" class="mt-0.5 text-primary dark:text-inverse-primary focus:ring-primary dark:focus:ring-inverse-primary bg-surface dark:bg-on-background border-outline-variant dark:border-outline" name="req" type="radio"/>
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface dark:text-on-primary">None</span>
+</div>
+</label>
+<label class="flex items-start gap-3 cursor-pointer">
+<input class="mt-0.5 text-primary dark:text-inverse-primary focus:ring-primary dark:focus:ring-inverse-primary bg-surface dark:bg-on-background border-outline-variant dark:border-outline" name="req" type="radio"/>
+<div class="flex-1">
+<span class="block font-label-sm text-label-sm text-on-surface dark:text-on-primary mb-2">Minimum purchase amount ($)</span>
+<input class="w-full font-body-base text-body-base bg-surface-container dark:bg-surface-variant border border-outline-variant dark:border-outline rounded-DEFAULT px-3 py-1.5 text-on-surface dark:text-on-primary opacity-50 cursor-not-allowed" disabled="" placeholder="0.00" type="number"/>
+</div>
+</label>
+</div>
+</div>
+<div class="h-px w-full bg-outline-variant dark:bg-outline opacity-50"></div>
+<!-- Usage Limits -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface dark:text-on-primary mb-3">Usage Limits</h4>
+<label class="flex items-center gap-3 cursor-pointer mb-2">
+<input class="rounded-sm text-primary dark:text-inverse-primary focus:ring-primary dark:focus:ring-inverse-primary bg-surface dark:bg-on-background border-outline-variant dark:border-outline" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface dark:text-on-primary">Limit number of times this discount can be used in total</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="rounded-sm text-primary dark:text-inverse-primary focus:ring-primary dark:focus:ring-inverse-primary bg-surface dark:bg-on-background border-outline-variant dark:border-outline" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface dark:text-on-primary">Limit to one use per customer</span>
+</label>
+</div>
+<!-- Expiry -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface dark:text-on-primary mb-1.5">Active Dates</label>
+<div class="flex gap-2">
+<input class="w-full font-body-sm text-body-sm bg-surface-container-lowest dark:bg-on-background border border-outline-variant dark:border-outline rounded-DEFAULT px-3 py-2 text-on-surface dark:text-on-primary focus:ring-2 focus:ring-primary dark:focus:ring-inverse-primary outline-none transition-all" type="date"/>
+<input class="w-full font-body-sm text-body-sm bg-surface-container-lowest dark:bg-on-background border border-outline-variant dark:border-outline rounded-DEFAULT px-3 py-2 text-on-surface dark:text-on-primary focus:ring-2 focus:ring-primary dark:focus:ring-inverse-primary outline-none transition-all" type="date"/>
+</div>
+</div>
+</div>
+<!-- Drawer Footer -->
+<div class="px-6 py-4 border-t border-outline-variant dark:border-outline bg-surface-container-low dark:bg-on-background flex justify-end gap-3 shrink-0">
+<button class="font-label-md text-label-md text-secondary hover:text-primary dark:hover:text-inverse-primary px-4 py-2 rounded-DEFAULT border border-outline-variant dark:border-outline hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" onclick="toggleDrawer('add-coupon-drawer')">Cancel</button>
+<button class="bg-primary dark:bg-inverse-primary text-on-primary dark:text-primary-container hover:opacity-90 font-label-md text-label-md px-6 py-2 rounded-DEFAULT transition-opacity shadow-sm">Save Coupon</button>
+</div>
+</div>
+</div>
+<!-- Logic Script -->
+<script>
+        // Simple view switching to demonstrate both screens
+        function switchTab(tabId) {
+            // Reset nav styles
+            const navItems = ['dashboard', 'products', 'categories', 'orders', 'coupons', 'blog', 'reviews', 'customers', 'admins', 'reports', 'settings'];
+            navItems.forEach(id => {
+                const el = document.getElementById(`nav-${id}`);
+                if(el) {
+                    el.className = "flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200";
+                }
+            });
+
+            // Set active nav style (using exact JSON injected classes logic)
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if(activeNav) {
+                activeNav.className = "flex items-center gap-3 px-3 py-2 rounded-DEFAULT bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container font-medium transition-colors duration-200";
+            }
+
+            // Hide all content areas
+            const contentCoupons = document.getElementById('view-coupons-content');
+            const contentReviews = document.getElementById('view-reviews-content');
+            
+            contentCoupons.classList.add('hidden');
+            contentCoupons.classList.remove('flex');
+            contentReviews.classList.add('hidden');
+            contentReviews.classList.remove('flex');
+
+            // Show target
+            if (tabId === 'coupons') {
+                contentCoupons.classList.remove('hidden');
+                contentCoupons.classList.add('flex');
+            } else if (tabId === 'reviews') {
+                contentReviews.classList.remove('hidden');
+                contentReviews.classList.add('flex');
+            }
+        }
+
+        // Drawer toggle logic
+        function toggleDrawer(drawerId) {
+            const drawer = document.getElementById(drawerId);
+            const panel = document.getElementById('drawer-panel');
+            const backdrop = document.getElementById('drawer-backdrop');
+            
+            const isClosed = panel.classList.contains('translate-x-full');
+            
+            if (isClosed) {
+                // Open
+                drawer.classList.remove('pointer-events-none');
+                backdrop.classList.replace('opacity-0', 'opacity-100');
+                backdrop.classList.add('pointer-events-auto');
+                panel.classList.remove('translate-x-full');
+            } else {
+                // Close
+                backdrop.classList.replace('opacity-100', 'opacity-0');
+                backdrop.classList.remove('pointer-events-auto');
+                panel.classList.add('translate-x-full');
+                
+                // Wait for animation
+                setTimeout(() => {
+                    drawer.classList.add('pointer-events-none');
+                }, 300);
+            }
+        }
+    </script>
+</body></html>

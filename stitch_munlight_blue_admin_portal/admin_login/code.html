@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LuxAdmin - Admin Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1b22",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e8e7f1",
+                        "surface-dim": "#dad9e3",
+                        "on-surface-variant": "#47464a",
+                        "on-surface": "#1a1b22",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5f5e61",
+                        "on-secondary-container": "#656467",
+                        "surface": "#fbf8ff",
+                        "primary-fixed": "#e5e1e4",
+                        "secondary-fixed": "#e4e1e5",
+                        "on-secondary-fixed-variant": "#47464a",
+                        "on-error": "#ffffff",
+                        "outline": "#78767b",
+                        "secondary-container": "#e4e1e5",
+                        "on-tertiary-fixed": "#1f1a1a",
+                        "tertiary-fixed-dim": "#cec4c4",
+                        "primary-fixed-dim": "#c8c6c8",
+                        "on-primary-fixed": "#1c1b1d",
+                        "secondary-fixed-dim": "#c8c6c9",
+                        "error": "#ba1a1a",
+                        "primary": "#000000",
+                        "surface-container-highest": "#e3e1ec",
+                        "on-primary-container": "#858386",
+                        "on-tertiary-container": "#8a8282",
+                        "surface-tint": "#5f5e60",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fbf8ff",
+                        "on-tertiary-fixed-variant": "#4c4545",
+                        "surface-variant": "#e3e1ec",
+                        "inverse-on-surface": "#f1effa",
+                        "surface-container-low": "#f4f2fd",
+                        "on-primary-fixed-variant": "#474649",
+                        "background": "#fbf8ff",
+                        "tertiary-container": "#1f1a1a",
+                        "primary-container": "#1c1b1d",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#000000",
+                        "outline-variant": "#c8c5ca",
+                        "inverse-primary": "#c8c6c8",
+                        "inverse-surface": "#2f3038",
+                        "on-secondary-fixed": "#1b1b1e",
+                        "tertiary-fixed": "#ebe0df",
+                        "surface-container": "#eeedf7",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "table-cell-py": "0.5rem",
+                        "sidebar-width": "240px",
+                        "element-gap": "0.75rem",
+                        "container-padding": "2rem",
+                        "section-gap": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "mono": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "h2": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h3": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-base": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "mono": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "h3": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-base": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "h1": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background dark:bg-on-background text-on-surface dark:text-surface flex items-center justify-center min-h-screen">
+<main class="w-full max-w-md p-6">
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-xl p-8 flex flex-col gap-8 shadow-sm">
+<div class="flex flex-col items-center gap-2 text-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">diamond</span>
+<h1 class="font-h1 text-h1 text-primary dark:text-on-primary">LuxAdmin</h1>
+</div>
+<p class="font-body-base text-body-base text-secondary dark:text-on-surface-variant">Admin Portal</p>
+</div>
+<form class="flex flex-col gap-6" onsubmit="event.preventDefault(); showError();">
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-secondary dark:text-on-surface-variant" for="email">Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary dark:text-on-surface-variant">mail</span>
+<input class="w-full bg-transparent border border-outline-variant dark:border-outline rounded-lg py-2 pl-10 pr-4 font-body-base text-body-base text-on-surface dark:text-on-primary focus:border-primary dark:focus:border-on-primary focus:ring-1 focus:ring-primary dark:focus:ring-on-primary outline-none transition-colors" id="email" name="email" placeholder="admin@luxadmin.com" required="" type="email" value="staff@luxadmin.com"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-secondary dark:text-on-surface-variant" for="password">Password</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary dark:text-on-surface-variant">lock</span>
+<input class="w-full bg-transparent border border-outline-variant dark:border-outline rounded-lg py-2 pl-10 pr-10 font-body-base text-body-base text-on-surface dark:text-on-primary focus:border-primary dark:focus:border-on-primary focus:ring-1 focus:ring-primary dark:focus:ring-on-primary outline-none transition-colors" id="password" name="password" placeholder="••••••••" required="" type="password" value="password123"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-on-primary transition-colors" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined" id="visibility-icon">visibility_off</span>
+</button>
+</div>
+</div>
+</div>
+<div class="hidden flex items-start gap-2 p-3 bg-error-container dark:bg-error-container border border-error/20 rounded-lg" id="error-message">
+<span class="material-symbols-outlined text-error dark:text-on-error-container mt-0.5">error</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-error dark:text-on-error-container">Access Denied</span>
+<span class="font-body-sm text-body-sm text-error/80 dark:text-on-error-container/80">You don't have admin access.</span>
+</div>
+</div>
+<div class="flex flex-col gap-4 pt-2">
+<button class="w-full bg-primary dark:bg-on-primary text-on-primary dark:text-primary font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-tint dark:hover:bg-inverse-primary transition-colors flex items-center justify-center gap-2" type="submit">
+                        Sign in
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+<p class="text-center font-body-sm text-body-sm text-secondary dark:text-on-surface-variant">
+                        Staff access only.
+                    </p>
+</div>
+</form>
+</div>
+<div class="mt-8 text-center flex items-center justify-center gap-2">
+<span class="font-body-sm text-body-sm text-secondary dark:text-on-surface-variant">Powered by Munlight Blue</span>
+<div class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-on-primary"></div>
+</div>
+</main>
+<script>
+        function togglePassword() {
+            const pwdInput = document.getElementById('password');
+            const icon = document.getElementById('visibility-icon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                icon.textContent = 'visibility';
+            } else {
+                pwdInput.type = 'password';
+                icon.textContent = 'visibility_off';
+            }
+        }
+
+        function showError() {
+            document.getElementById('error-message').classList.remove('hidden');
+        }
+    </script>
+</body></html>

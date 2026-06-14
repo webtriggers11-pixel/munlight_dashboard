@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard - LuxAdmin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#1a1b22",
+                      "on-error-container": "#93000a",
+                      "surface-container-high": "#e8e7f1",
+                      "surface-dim": "#dad9e3",
+                      "on-surface-variant": "#47464a",
+                      "on-surface": "#1a1b22",
+                      "on-primary": "#ffffff",
+                      "secondary": "#5f5e61",
+                      "on-secondary-container": "#656467",
+                      "surface": "#fbf8ff",
+                      "primary-fixed": "#e5e1e4",
+                      "secondary-fixed": "#e4e1e5",
+                      "on-secondary-fixed-variant": "#47464a",
+                      "on-error": "#ffffff",
+                      "outline": "#78767b",
+                      "secondary-container": "#e4e1e5",
+                      "on-tertiary-fixed": "#1f1a1a",
+                      "tertiary-fixed-dim": "#cec4c4",
+                      "primary-fixed-dim": "#c8c6c8",
+                      "on-primary-fixed": "#1c1b1d",
+                      "secondary-fixed-dim": "#c8c6c9",
+                      "error": "#ba1a1a",
+                      "primary": "#000000",
+                      "surface-container-highest": "#e3e1ec",
+                      "on-primary-container": "#858386",
+                      "on-tertiary-container": "#8a8282",
+                      "surface-tint": "#5f5e60",
+                      "on-tertiary": "#ffffff",
+                      "surface-bright": "#fbf8ff",
+                      "on-tertiary-fixed-variant": "#4c4545",
+                      "surface-variant": "#e3e1ec",
+                      "inverse-on-surface": "#f1effa",
+                      "surface-container-low": "#f4f2fd",
+                      "on-primary-fixed-variant": "#474649",
+                      "background": "#fbf8ff",
+                      "tertiary-container": "#1f1a1a",
+                      "primary-container": "#1c1b1d",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary": "#000000",
+                      "outline-variant": "#c8c5ca",
+                      "inverse-primary": "#c8c6c8",
+                      "inverse-surface": "#2f3038",
+                      "on-secondary-fixed": "#1b1b1e",
+                      "tertiary-fixed": "#ebe0df",
+                      "surface-container": "#eeedf7",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "table-cell-py": "0.5rem",
+                      "sidebar-width": "240px",
+                      "element-gap": "0.75rem",
+                      "container-padding": "2rem",
+                      "section-gap": "1.5rem"
+              },
+              "fontFamily": {
+                      "mono": [
+                              "JetBrains Mono"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "h2": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "h3": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-base": [
+                              "Inter"
+                      ],
+                      "h1": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "mono": [
+                              "13px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h2": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "h3": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-base": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h1": [
+                              "30px",
+                              {
+                                      "lineHeight": "36px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background antialiased flex">
+<!-- SideNavBar -->
+<nav class="bg-surface dark:bg-on-background docked left-0 h-screen w-[240px] border-r border-outline-variant dark:border-outline flat no shadows fixed left-0 top-0 h-full overflow-y-auto flex flex-col z-50">
+<div class="p-6">
+<h1 class="font-h2 text-h2 font-bold text-on-surface dark:text-surface-bright">LuxAdmin</h1>
+<p class="font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mt-1">Premium Jewellery</p>
+</div>
+<ul class="flex-1 px-3 space-y-1">
+<li>
+<a class="flex items-center px-[12px] py-2 rounded bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container font-medium transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="dashboard">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-[12px] py-2 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="diamond">diamond</span>
+<span class="font-body-sm text-body-sm">Products</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-[12px] py-2 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="category">category</span>
+<span class="font-body-sm text-body-sm">Categories</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-[12px] py-2 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-body-sm text-body-sm">Orders</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-[12px] py-2 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="local_offer">local_offer</span>
+<span class="font-body-sm text-body-sm">Coupons</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-[12px] py-2 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="article">article</span>
+<span class="font-body-sm text-body-sm">Blog</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-[12px] py-2 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="rate_review">rate_review</span>
+<span class="font-body-sm text-body-sm">Reviews</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-[12px] py-2 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="group">group</span>
+<span class="font-body-sm text-body-sm">Customers</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-[12px] py-2 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="font-body-sm text-body-sm">Admins</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-[12px] py-2 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="analytics">analytics</span>
+<span class="font-body-sm text-body-sm">Reports</span>
+</a>
+</li>
+<li>
+<a class="flex items-center px-[12px] py-2 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3 font-body-sm text-body-sm" data-icon="settings">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col min-h-screen ml-[240px]">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background docked top-0 full-width border-b border-outline-variant dark:border-outline flat no shadows flex justify-between items-center h-16 px-6 sticky top-0 z-40 transition-all duration-150">
+<div class="flex-1 flex items-center">
+<!-- Search bar on left -->
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant dark:text-on-secondary-fixed-variant text-sm">search</span>
+<input class="w-full bg-surface-container dark:bg-surface-variant border border-outline-variant dark:border-outline rounded pl-8 pr-3 py-1.5 font-label-md text-label-md text-primary dark:text-on-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-on-primary" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-element-gap">
+<button class="p-2 rounded-full text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container dark:hover:bg-surface-variant transition-colors duration-150">
+<span class="material-symbols-outlined font-label-md text-label-md" data-icon="dark_mode">dark_mode</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container dark:hover:bg-surface-variant transition-colors duration-150">
+<span class="material-symbols-outlined font-label-md text-label-md" data-icon="notifications">notifications</span>
+</button>
+<div class="w-px h-6 bg-outline-variant dark:bg-outline mx-2"></div>
+<button class="font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-on-primary transition-colors duration-150">Logout</button>
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full ml-2 border border-outline-variant dark:border-outline" data-alt="A small circular avatar placeholder image for a user profile, featuring initials or a generated face in a modern minimalist style, ensuring it fits perfectly within a corporate dashboard header." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRTl2oJZ7e-fmIjAv5bltfpVN6WIu9olJi7K8Db4jKG90_Apo7QS93OcZhpYkQR54b08WfRl5m275m_jCBvfgkEaX9z-QYu938TFElCKSTgrvA17QMNBLHvWXnPPLYHdv9bQSQbRgk_kvHteQ5VjvklLUrxTqF8siyil8CxWSdW9IrksmZfh7TB3ONg5TchkRHNHwTczY-92clRCHocJJnxiJJb2rhfOVkkTqX1UOyWARUIqcUCjY7KqGogUSsPTe3pi2uX1Nj6AA"/>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<main class="flex-1 p-container-padding bg-background overflow-y-auto">
+<div class="flex justify-between items-end mb-section-gap">
+<div>
+<h2 class="font-h1 text-h1 text-primary dark:text-on-primary">Dashboard Overview</h2>
+<p class="font-body-base text-body-base text-secondary dark:text-on-secondary-fixed-variant mt-1">Key metrics and recent activity for LuxAdmin.</p>
+</div>
+<div class="flex space-x-element-gap">
+<button class="px-4 py-2 bg-primary dark:bg-on-primary text-on-primary dark:text-primary font-label-md text-label-md rounded hover:bg-surface-tint dark:hover:bg-surface-container transition-colors">Export Report</button>
+</div>
+</div>
+<!-- Stat Cards Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-element-gap mb-section-gap">
+<!-- Card 1 -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg p-5 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-md text-label-md text-secondary dark:text-on-secondary-fixed-variant">Total Orders</p>
+<span class="material-symbols-outlined text-outline dark:text-outline-variant text-lg">shopping_bag</span>
+</div>
+<div>
+<h3 class="font-h2 text-h2 text-primary dark:text-on-primary">1,248</h3>
+<p class="font-body-sm text-body-sm text-primary dark:text-on-primary mt-1 flex items-center">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span> +12.5% <span class="text-secondary dark:text-on-secondary-fixed-variant ml-1">vs last month</span>
+</p>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg p-5 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center space-x-2">
+<p class="font-label-md text-label-md text-secondary dark:text-on-secondary-fixed-variant">Revenue</p>
+<div class="flex bg-surface-container dark:bg-surface-variant rounded p-0.5">
+<button class="px-2 py-0.5 bg-surface dark:bg-surface-container-lowest rounded shadow-sm font-label-sm text-label-sm text-primary dark:text-on-primary">Mo</button>
+<button class="px-2 py-0.5 font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant">Yr</button>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline dark:text-outline-variant text-lg">payments</span>
+</div>
+<div>
+<h3 class="font-h2 text-h2 text-primary dark:text-on-primary">$84,230</h3>
+<p class="font-body-sm text-body-sm text-primary dark:text-on-primary mt-1 flex items-center">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span> +8.2% <span class="text-secondary dark:text-on-secondary-fixed-variant ml-1">vs last month</span>
+</p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg p-5 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-md text-label-md text-secondary dark:text-on-secondary-fixed-variant">Total Customers</p>
+<span class="material-symbols-outlined text-outline dark:text-outline-variant text-lg">group</span>
+</div>
+<div>
+<h3 class="font-h2 text-h2 text-primary dark:text-on-primary">8,932</h3>
+<p class="font-body-sm text-body-sm text-primary dark:text-on-primary mt-1 flex items-center">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span> +2.4% <span class="text-secondary dark:text-on-secondary-fixed-variant ml-1">vs last month</span>
+</p>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg p-5 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-md text-label-md text-secondary dark:text-on-secondary-fixed-variant">Active Products</p>
+<span class="material-symbols-outlined text-outline dark:text-outline-variant text-lg">inventory_2</span>
+</div>
+<div>
+<h3 class="font-h2 text-h2 text-primary dark:text-on-primary">342</h3>
+<p class="font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant mt-1 flex items-center">
+<span class="material-symbols-outlined text-sm mr-1">trending_flat</span> 0.0% <span class="ml-1">vs last month</span>
+</p>
+</div>
+</div>
+</div>
+<!-- Chart Section -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg p-6 mb-section-gap">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-h3 text-h3 text-primary dark:text-on-primary">Sales over time</h3>
+<div class="flex bg-surface-container dark:bg-surface-variant rounded p-1 border border-outline-variant dark:border-outline">
+<button class="px-3 py-1 font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-on-primary rounded">7d</button>
+<button class="px-3 py-1 bg-surface dark:bg-surface-container-lowest rounded shadow-sm font-label-sm text-label-sm text-primary dark:text-on-primary">30d</button>
+<button class="px-3 py-1 font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-on-primary rounded">90d</button>
+</div>
+</div>
+<!-- Placeholder for Line Chart -->
+<div class="h-64 w-full flex items-center justify-center border border-dashed border-outline-variant dark:border-outline rounded">
+<span class="text-secondary dark:text-on-secondary-fixed-variant font-mono text-mono">[Line Chart visualization area: Sales over 30 days]</span>
+</div>
+</div>
+<!-- Lower Area Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-element-gap">
+<!-- Left Column: Recent Orders (Takes up 2 columns on large screens) -->
+<div class="xl:col-span-2 bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg flex flex-col">
+<div class="p-5 border-b border-outline-variant dark:border-outline flex justify-between items-center">
+<h3 class="font-h3 text-h3 text-primary dark:text-on-primary">Recent Orders</h3>
+<button class="font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-on-primary">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-on-background">
+<th class="py-table-cell-py px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant font-medium">Order #</th>
+<th class="py-table-cell-py px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant font-medium">Customer</th>
+<th class="py-table-cell-py px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant font-medium">Date</th>
+<th class="py-table-cell-py px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant font-medium">Total</th>
+<th class="py-table-cell-py px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant font-medium">Status</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm">
+<tr class="border-b border-outline-variant dark:border-outline hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors">
+<td class="py-table-cell-py px-4 font-mono text-mono text-primary dark:text-on-primary">ORD-8901</td>
+<td class="py-table-cell-py px-4 text-primary dark:text-on-primary">Elena Rostova</td>
+<td class="py-table-cell-py px-4 text-secondary dark:text-on-secondary-fixed-variant">Oct 24, 2023</td>
+<td class="py-table-cell-py px-4 text-primary dark:text-on-primary">$1,250.00</td>
+<td class="py-table-cell-py px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-container-highest dark:bg-primary-container text-primary dark:text-on-primary-container border border-outline-variant dark:border-outline">Processing</span>
+</td>
+</tr>
+<tr class="border-b border-outline-variant dark:border-outline hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors">
+<td class="py-table-cell-py px-4 font-mono text-mono text-primary dark:text-on-primary">ORD-8900</td>
+<td class="py-table-cell-py px-4 text-primary dark:text-on-primary">Marcus Vance</td>
+<td class="py-table-cell-py px-4 text-secondary dark:text-on-secondary-fixed-variant">Oct 24, 2023</td>
+<td class="py-table-cell-py px-4 text-primary dark:text-on-primary">$450.00</td>
+<td class="py-table-cell-py px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-container dark:bg-surface-variant text-secondary dark:text-on-secondary-fixed-variant border border-outline-variant dark:border-outline">Shipped</span>
+</td>
+</tr>
+<tr class="border-b border-outline-variant dark:border-outline hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors">
+<td class="py-table-cell-py px-4 font-mono text-mono text-primary dark:text-on-primary">ORD-8899</td>
+<td class="py-table-cell-py px-4 text-primary dark:text-on-primary">Sarah Jenkins</td>
+<td class="py-table-cell-py px-4 text-secondary dark:text-on-secondary-fixed-variant">Oct 23, 2023</td>
+<td class="py-table-cell-py px-4 text-primary dark:text-on-primary">$3,100.00</td>
+<td class="py-table-cell-py px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-container dark:bg-surface-variant text-secondary dark:text-on-secondary-fixed-variant border border-outline-variant dark:border-outline">Shipped</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors">
+<td class="py-table-cell-py px-4 font-mono text-mono text-primary dark:text-on-primary">ORD-8898</td>
+<td class="py-table-cell-py px-4 text-primary dark:text-on-primary">David Chen</td>
+<td class="py-table-cell-py px-4 text-secondary dark:text-on-secondary-fixed-variant">Oct 23, 2023</td>
+<td class="py-table-cell-py px-4 text-primary dark:text-on-primary">$89.00</td>
+<td class="py-table-cell-py px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-error-container text-on-error-container border border-error-container">Cancelled</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Right Column: Alerts & Small Cards -->
+<div class="flex flex-col space-y-element-gap">
+<!-- Low Stock Alerts -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg flex-1 flex flex-col">
+<div class="p-5 border-b border-outline-variant dark:border-outline">
+<h3 class="font-h3 text-h3 text-primary dark:text-on-primary flex items-center">
+                                Low Stock Alerts
+                                <span class="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-error-container text-on-error-container">3</span>
+</h3>
+</div>
+<div class="p-5 flex-1 space-y-4">
+<div class="flex justify-between items-center">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded bg-surface-container-high dark:bg-surface-variant border border-outline-variant dark:border-outline flex items-center justify-center mr-3">
+<span class="material-symbols-outlined text-sm text-secondary dark:text-on-secondary-fixed-variant">diamond</span>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-primary dark:text-on-primary font-medium">18k Gold Chain</p>
+<p class="font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant">SKU: GC-18K-001</p>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-error font-medium">2 left</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded bg-surface-container-high dark:bg-surface-variant border border-outline-variant dark:border-outline flex items-center justify-center mr-3">
+<span class="material-symbols-outlined text-sm text-secondary dark:text-on-secondary-fixed-variant">watch</span>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-primary dark:text-on-primary font-medium">Classic Chronograph</p>
+<p class="font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant">SKU: WA-CH-092</p>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-error font-medium">1 left</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center">
+<div class="w-8 h-8 rounded bg-surface-container-high dark:bg-surface-variant border border-outline-variant dark:border-outline flex items-center justify-center mr-3">
+<span class="material-symbols-outlined text-sm text-secondary dark:text-on-secondary-fixed-variant">diamond</span>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-primary dark:text-on-primary font-medium">Silver Hoop Earrings</p>
+<p class="font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant">SKU: ER-SH-044</p>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-error font-medium">5 left</span>
+</div>
+</div>
+</div>
+<!-- Pending Reviews -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-lg p-5 flex items-center justify-between">
+<div>
+<p class="font-label-md text-label-md text-secondary dark:text-on-secondary-fixed-variant mb-1">Pending Reviews</p>
+<h3 class="font-h2 text-h2 text-primary dark:text-on-primary">14</h3>
+</div>
+<div class="w-12 h-12 rounded-full bg-surface-container dark:bg-surface-variant border border-outline-variant dark:border-outline flex items-center justify-center">
+<span class="material-symbols-outlined text-primary dark:text-on-primary text-xl">rate_review</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

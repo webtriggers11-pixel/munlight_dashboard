@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LuxAdmin - Product Edit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1b22",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e8e7f1",
+                        "surface-dim": "#dad9e3",
+                        "on-surface-variant": "#47464a",
+                        "on-surface": "#1a1b22",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5f5e61",
+                        "on-secondary-container": "#656467",
+                        "surface": "#fbf8ff",
+                        "primary-fixed": "#e5e1e4",
+                        "secondary-fixed": "#e4e1e5",
+                        "on-secondary-fixed-variant": "#47464a",
+                        "on-error": "#ffffff",
+                        "outline": "#78767b",
+                        "secondary-container": "#e4e1e5",
+                        "on-tertiary-fixed": "#1f1a1a",
+                        "tertiary-fixed-dim": "#cec4c4",
+                        "primary-fixed-dim": "#c8c6c8",
+                        "on-primary-fixed": "#1c1b1d",
+                        "secondary-fixed-dim": "#c8c6c9",
+                        "error": "#ba1a1a",
+                        "primary": "#000000",
+                        "surface-container-highest": "#e3e1ec",
+                        "on-primary-container": "#858386",
+                        "on-tertiary-container": "#8a8282",
+                        "surface-tint": "#5f5e60",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fbf8ff",
+                        "on-tertiary-fixed-variant": "#4c4545",
+                        "surface-variant": "#e3e1ec",
+                        "inverse-on-surface": "#f1effa",
+                        "surface-container-low": "#f4f2fd",
+                        "on-primary-fixed-variant": "#474649",
+                        "background": "#fbf8ff",
+                        "tertiary-container": "#1f1a1a",
+                        "primary-container": "#1c1b1d",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#000000",
+                        "outline-variant": "#c8c5ca",
+                        "inverse-primary": "#c8c6c8",
+                        "inverse-surface": "#2f3038",
+                        "on-secondary-fixed": "#1b1b1e",
+                        "tertiary-fixed": "#ebe0df",
+                        "surface-container": "#eeedf7",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "table-cell-py": "0.5rem",
+                        "sidebar-width": "240px",
+                        "element-gap": "0.75rem",
+                        "container-padding": "2rem",
+                        "section-gap": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "mono": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "h2": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h3": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-base": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "mono": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "h2": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "h3": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "body-base": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "h1": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #47464a; border-radius: 4px; }
+        ::-webkit-scrollbar-corner { background: transparent; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background dark:bg-on-background text-on-surface dark:text-surface-bright font-body-base min-h-screen flex antialiased">
+<!-- SideNavBar -->
+<nav class="bg-surface dark:bg-on-background fixed left-0 top-0 h-full overflow-y-auto flex flex-col w-[240px] border-r border-outline-variant dark:border-outline z-50 hidden md:flex">
+<div class="p-6">
+<h1 class="font-h2 text-h2 font-bold text-on-surface dark:text-surface-bright">LuxAdmin</h1>
+<p class="font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant mt-1">Premium Jewellery</p>
+</div>
+<div class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container font-medium transition-colors duration-200" href="#">
+<span class="material-symbols-outlined fill-icon">diamond</span>
+<span class="font-body-sm text-body-sm">Products</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="font-body-sm text-body-sm">Categories</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-body-sm text-body-sm">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_offer</span>
+<span class="font-body-sm text-body-sm">Coupons</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">article</span>
+<span class="font-body-sm text-body-sm">Blog</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">rate_review</span>
+<span class="font-body-sm text-body-sm">Reviews</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-sm text-body-sm">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+<span class="font-body-sm text-body-sm">Admins</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-sm text-body-sm">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 md:ml-[240px] flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background border-b border-outline-variant dark:border-outline flex justify-between items-center h-16 px-6 sticky top-0 z-40 transition-all duration-150">
+<div class="flex items-center gap-4">
+<span class="md:hidden font-h3 text-h3 font-bold">LuxAdmin</span>
+<!-- Breadcrumbs -->
+<nav class="hidden md:flex items-center gap-2 font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-fixed-variant">
+<a class="hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#">Products</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-primary dark:text-inverse-primary border-b-2 border-primary">Create Product</span>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded hover:bg-surface-container dark:hover:bg-surface-variant transition-colors text-on-surface-variant dark:text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="p-2 rounded hover:bg-surface-container dark:hover:bg-surface-variant transition-colors text-on-surface-variant dark:text-on-secondary-fixed-variant relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="w-px h-6 bg-outline-variant dark:bg-outline mx-2"></div>
+<button class="font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-inverse-primary transition-colors">Logout</button>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 p-container-padding overflow-y-auto pb-24">
+<div class="max-w-7xl mx-auto space-y-section-gap">
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-h1 text-h1 text-primary dark:text-on-primary">Add New Product</h2>
+<p class="font-body-base text-body-base text-secondary dark:text-on-secondary-fixed-variant mt-1">Fill in the details below to create a new jewellery piece.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-element-gap">
+<!-- Left Column: Details -->
+<div class="lg:col-span-2 space-y-element-gap">
+<!-- Basic Info Card -->
+<div class="bg-surface-container-lowest dark:bg-surface-container border border-outline-variant dark:border-outline rounded-lg p-6">
+<h3 class="font-h3 text-h3 text-primary dark:text-on-primary mb-4">Basic Information</h3>
+<div class="space-y-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mb-1">Product Name</label>
+<input class="w-full bg-transparent border border-outline-variant dark:border-outline rounded px-3 py-2 font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-on-primary focus:border-transparent transition-all" placeholder="e.g. Diamond Solitaire Ring" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mb-1">Slug (Auto-generated)</label>
+<input class="w-full bg-surface-container-high dark:bg-surface-variant border border-outline-variant dark:border-outline rounded px-3 py-2 font-mono text-mono text-on-surface-variant dark:text-on-secondary-fixed-variant cursor-not-allowed" placeholder="diamond-solitaire-ring" readonly="" type="text"/>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mb-1">Description</label>
+<div class="border border-outline-variant dark:border-outline rounded overflow-hidden">
+<!-- Fake Rich Text Toolbar -->
+<div class="bg-surface-container-high dark:bg-surface-variant border-b border-outline-variant dark:border-outline p-2 flex gap-1">
+<button class="p-1 rounded hover:bg-surface-container dark:hover:bg-primary-container text-secondary dark:text-on-secondary-fixed-variant" type="button"><span class="material-symbols-outlined text-[18px]">format_bold</span></button>
+<button class="p-1 rounded hover:bg-surface-container dark:hover:bg-primary-container text-secondary dark:text-on-secondary-fixed-variant" type="button"><span class="material-symbols-outlined text-[18px]">format_italic</span></button>
+<button class="p-1 rounded hover:bg-surface-container dark:hover:bg-primary-container text-secondary dark:text-on-secondary-fixed-variant" type="button"><span class="material-symbols-outlined text-[18px]">format_list_bulleted</span></button>
+</div>
+<textarea class="w-full bg-transparent border-0 px-3 py-2 font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:ring-0 resize-y" placeholder="Describe the product..." rows="5"></textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- Pricing & Inventory Card -->
+<div class="bg-surface-container-lowest dark:bg-surface-container border border-outline-variant dark:border-outline rounded-lg p-6">
+<h3 class="font-h3 text-h3 text-primary dark:text-on-primary mb-4">Pricing &amp; Inventory</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mb-1">Selling Price (₹)</label>
+<div class="relative">
+<span class="absolute left-3 top-2 text-secondary dark:text-on-secondary-fixed-variant font-body-sm">₹</span>
+<input class="w-full bg-transparent border border-outline-variant dark:border-outline rounded pl-8 pr-3 py-2 font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-on-primary transition-all" placeholder="0.00" type="number"/>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mb-1">MRP (₹)</label>
+<div class="relative">
+<span class="absolute left-3 top-2 text-secondary dark:text-on-secondary-fixed-variant font-body-sm">₹</span>
+<input class="w-full bg-transparent border border-outline-variant dark:border-outline rounded pl-8 pr-3 py-2 font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-on-primary transition-all" placeholder="0.00" type="number"/>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mb-1">Stock Quantity</label>
+<input class="w-full bg-transparent border border-outline-variant dark:border-outline rounded px-3 py-2 font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-on-primary transition-all" placeholder="0" type="number"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mb-1">SKU</label>
+<input class="w-full bg-transparent border border-outline-variant dark:border-outline rounded px-3 py-2 font-mono text-mono text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-on-primary transition-all" placeholder="e.g. R-DIA-001" type="text"/>
+</div>
+</div>
+</div>
+<!-- Organization Card -->
+<div class="bg-surface-container-lowest dark:bg-surface-container border border-outline-variant dark:border-outline rounded-lg p-6">
+<h3 class="font-h3 text-h3 text-primary dark:text-on-primary mb-4">Organization &amp; Details</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mb-1">Category</label>
+<select class="w-full bg-transparent border border-outline-variant dark:border-outline rounded px-3 py-2 font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-on-primary transition-all appearance-none">
+<option disabled="" selected="" value="">Select Category</option>
+<option value="rings">Rings</option>
+<option value="necklaces">Necklaces</option>
+<option value="earrings">Earrings</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mb-1">Weight (grams)</label>
+<input class="w-full bg-transparent border border-outline-variant dark:border-outline rounded px-3 py-2 font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-on-primary transition-all" placeholder="0.00" type="number"/>
+</div>
+<div class="md:col-span-2">
+<label class="block font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant mb-1">Tags</label>
+<div class="border border-outline-variant dark:border-outline rounded p-2 min-h-[42px] flex flex-wrap gap-2 items-center bg-transparent">
+<!-- Sample Chips -->
+<span class="inline-flex items-center gap-1 bg-surface-container-high dark:bg-surface-variant text-on-surface-variant dark:text-on-secondary-fixed-variant px-2 py-1 rounded text-[11px] font-medium border border-outline-variant dark:border-outline">
+                                            Gold <button class="material-symbols-outlined text-[14px] hover:text-error transition-colors" type="button">close</button>
+</span>
+<span class="inline-flex items-center gap-1 bg-surface-container-high dark:bg-surface-variant text-on-surface-variant dark:text-on-secondary-fixed-variant px-2 py-1 rounded text-[11px] font-medium border border-outline-variant dark:border-outline">
+                                            18k <button class="material-symbols-outlined text-[14px] hover:text-error transition-colors" type="button">close</button>
+</span>
+<input class="bg-transparent border-0 p-0 text-sm focus:ring-0 w-24 flex-1 text-on-surface dark:text-surface-bright font-body-sm text-body-sm" placeholder="Add tag..." type="text"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Media & Flags -->
+<div class="space-y-element-gap">
+<!-- Media Card -->
+<div class="bg-surface-container-lowest dark:bg-surface-container border border-outline-variant dark:border-outline rounded-lg p-6">
+<h3 class="font-h3 text-h3 text-primary dark:text-on-primary mb-4">Media</h3>
+<div class="border-2 border-dashed border-outline-variant dark:border-outline rounded-lg p-8 flex flex-col items-center justify-center text-center hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-secondary dark:text-on-secondary-fixed-variant group-hover:text-primary dark:group-hover:text-on-primary mb-2 transition-colors">cloud_upload</span>
+<p class="font-label-md text-label-md text-primary dark:text-on-primary">Drag &amp; drop images here</p>
+<p class="font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant mt-1">or click to browse</p>
+<p class="font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant mt-2 text-[10px]">JPEG, PNG. Max 5MB per image.</p>
+</div>
+<!-- Gallery Preview -->
+<div class="mt-4 grid grid-cols-3 gap-2">
+<div class="relative aspect-square rounded border border-outline-variant dark:border-outline overflow-hidden group">
+<img alt="Ring image" class="object-cover w-full h-full" data-alt="A close-up studio shot of a sparkling diamond solitaire ring on a dark grey minimalist surface. Lighting is dramatic and precise, highlighting the facets of the diamond. The mood is luxurious and high-end, fitting a dark-mode premium admin interface. Colors are deep blacks and stark whites with silver metallic tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZUweXf4h_NhX45lBNGxt80fcxDx93FhfwhebSh2FhTQARb1TeNsYOKyuxJeMsCZ5UMcWhMZkqTDlzuULooyX40uZ8-KDB_IxPdxG-6vEaIQopiuXozAweLpyWUt1-OdnR6O21G9d5W0Pa1zU-b3YhHI_G1aUbfDIuwY9RRvko_lBJtidx9NsYZd2CPzQcJsv_MgkF5mS6pwO3D-HcLRyz65aFgxMc4_SGRE-_cgKlopvpzk0orFbMT8pK1_cGf9BV3mSM11-0J5A"/>
+<div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<button class="text-white hover:text-error"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+<span class="absolute top-1 left-1 bg-primary text-on-primary text-[9px] px-1.5 py-0.5 rounded font-medium">Main</span>
+</div>
+<div class="relative aspect-square rounded border border-outline-variant dark:border-outline overflow-hidden group bg-surface-container-high dark:bg-surface-variant flex items-center justify-center text-secondary dark:text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined">image</span>
+</div>
+<div class="relative aspect-square rounded border border-outline-variant dark:border-outline overflow-hidden group bg-surface-container-high dark:bg-surface-variant flex items-center justify-center text-secondary dark:text-on-secondary-fixed-variant border-dashed">
+<span class="material-symbols-outlined">add</span>
+</div>
+</div>
+</div>
+<!-- Flags Card -->
+<div class="bg-surface-container-lowest dark:bg-surface-container border border-outline-variant dark:border-outline rounded-lg p-6">
+<h3 class="font-h3 text-h3 text-primary dark:text-on-primary mb-4">Status &amp; Flags</h3>
+<div class="space-y-4">
+<!-- Toggle 1 -->
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary dark:text-on-secondary-fixed-variant group-hover:text-primary dark:group-hover:text-on-primary transition-colors text-[20px]">visibility</span>
+<span class="font-label-md text-label-md text-primary dark:text-on-primary">Active</span>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-secondary dark:border-on-secondary-fixed-variant right-0 border-primary dark:border-on-primary" id="toggle1" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-primary dark:bg-surface-variant cursor-pointer" for="toggle1"></label>
+</div>
+</label>
+<hr class="border-outline-variant dark:border-outline"/>
+<!-- Toggle 2 -->
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary dark:text-on-secondary-fixed-variant group-hover:text-primary dark:group-hover:text-on-primary transition-colors text-[20px]">handyman</span>
+<span class="font-label-md text-label-md text-primary dark:text-on-primary">Handmade</span>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant dark:border-outline" id="toggle2" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-container-high dark:bg-surface-variant cursor-pointer" for="toggle2"></label>
+</div>
+</label>
+<hr class="border-outline-variant dark:border-outline"/>
+<!-- Toggle 3 -->
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary dark:text-on-secondary-fixed-variant group-hover:text-primary dark:group-hover:text-on-primary transition-colors text-[20px]">star</span>
+<span class="font-label-md text-label-md text-primary dark:text-on-primary">Featured</span>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant dark:border-outline" id="toggle3" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-container-high dark:bg-surface-variant cursor-pointer" for="toggle3"></label>
+</div>
+</label>
+<hr class="border-outline-variant dark:border-outline"/>
+<!-- Toggle 4 -->
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary dark:text-on-secondary-fixed-variant group-hover:text-primary dark:group-hover:text-on-primary transition-colors text-[20px]">new_releases</span>
+<span class="font-label-md text-label-md text-primary dark:text-on-primary">New Arrival</span>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-secondary dark:border-on-secondary-fixed-variant right-0 border-primary dark:border-on-primary" id="toggle4" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-primary dark:bg-surface-variant cursor-pointer" for="toggle4"></label>
+</div>
+</label>
+<hr class="border-outline-variant dark:border-outline"/>
+<!-- Toggle 5 -->
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary dark:text-on-secondary-fixed-variant group-hover:text-primary dark:group-hover:text-on-primary transition-colors text-[20px]">trending_up</span>
+<span class="font-label-md text-label-md text-primary dark:text-on-primary">Bestseller</span>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant dark:border-outline" id="toggle5" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-container-high dark:bg-surface-variant cursor-pointer" for="toggle5"></label>
+</div>
+</label>
+</div>
+<style>
+                                /* Simple custom toggle CSS to avoid complex JS for demo */
+                                .toggle-checkbox:checked {
+                                    right: 0;
+                                    border-color: #fbf8ff; /* dark:on-primary approx */
+                                }
+                                .dark .toggle-checkbox:checked {
+                                    border-color: #1a1b22; /* dark:surface-variant approx */
+                                }
+                                .toggle-checkbox:checked + .toggle-label {
+                                    background-color: #ffffff;
+                                }
+                                .dark .toggle-checkbox:checked + .toggle-label {
+                                    background-color: #ffffff;
+                                }
+                            </style>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Sticky Footer Actions -->
+<div class="fixed bottom-0 right-0 left-0 md:left-[240px] bg-surface-container-lowest/90 dark:bg-on-background/90 backdrop-blur-md border-t border-outline-variant dark:border-outline px-6 py-4 flex justify-end gap-4 z-40">
+<button class="px-4 py-2 rounded font-label-md text-label-md border border-outline-variant dark:border-outline text-primary dark:text-on-primary hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors">
+                Cancel
+            </button>
+<button class="px-4 py-2 rounded font-label-md text-label-md bg-primary dark:bg-on-primary text-on-primary dark:text-primary hover:bg-surface-tint transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                Save Product
+            </button>
+</div>
+</div>
+</body></html>

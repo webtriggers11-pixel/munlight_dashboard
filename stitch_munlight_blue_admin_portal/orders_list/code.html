@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LuxAdmin - Orders List</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "on-background": "#1a1b22",
+                            "on-error-container": "#93000a",
+                            "surface-container-high": "#e8e7f1",
+                            "surface-dim": "#dad9e3",
+                            "on-surface-variant": "#47464a",
+                            "on-surface": "#1a1b22",
+                            "on-primary": "#ffffff",
+                            "secondary": "#5f5e61",
+                            "on-secondary-container": "#656467",
+                            "surface": "#fbf8ff",
+                            "primary-fixed": "#e5e1e4",
+                            "secondary-fixed": "#e4e1e5",
+                            "on-secondary-fixed-variant": "#47464a",
+                            "on-error": "#ffffff",
+                            "outline": "#78767b",
+                            "secondary-container": "#e4e1e5",
+                            "on-tertiary-fixed": "#1f1a1a",
+                            "tertiary-fixed-dim": "#cec4c4",
+                            "primary-fixed-dim": "#c8c6c8",
+                            "on-primary-fixed": "#1c1b1d",
+                            "secondary-fixed-dim": "#c8c6c9",
+                            "error": "#ba1a1a",
+                            "primary": "#000000",
+                            "surface-container-highest": "#e3e1ec",
+                            "on-primary-container": "#858386",
+                            "on-tertiary-container": "#8a8282",
+                            "surface-tint": "#5f5e60",
+                            "on-tertiary": "#ffffff",
+                            "surface-bright": "#fbf8ff",
+                            "on-tertiary-fixed-variant": "#4c4545",
+                            "surface-variant": "#e3e1ec",
+                            "inverse-on-surface": "#f1effa",
+                            "surface-container-low": "#f4f2fd",
+                            "on-primary-fixed-variant": "#474649",
+                            "background": "#fbf8ff",
+                            "tertiary-container": "#1f1a1a",
+                            "primary-container": "#1c1b1d",
+                            "surface-container-lowest": "#ffffff",
+                            "tertiary": "#000000",
+                            "outline-variant": "#c8c5ca",
+                            "inverse-primary": "#c8c6c8",
+                            "inverse-surface": "#2f3038",
+                            "on-secondary-fixed": "#1b1b1e",
+                            "tertiary-fixed": "#ebe0df",
+                            "surface-container": "#eeedf7",
+                            "on-secondary": "#ffffff",
+                            "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.125rem",
+                            "lg": "0.25rem",
+                            "xl": "0.5rem",
+                            "full": "0.75rem"
+                    },
+                    "spacing": {
+                            "table-cell-py": "0.5rem",
+                            "sidebar-width": "240px",
+                            "element-gap": "0.75rem",
+                            "container-padding": "2rem",
+                            "section-gap": "1.5rem"
+                    },
+                    "fontFamily": {
+                            "mono": ["JetBrains Mono"],
+                            "body-sm": ["Inter"],
+                            "h2": ["Inter"],
+                            "label-sm": ["Inter"],
+                            "h3": ["Inter"],
+                            "label-md": ["Inter"],
+                            "body-base": ["Inter"],
+                            "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                            "mono": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+                            "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                            "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                            "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                            "h3": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                            "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                            "body-base": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                            "h1": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        .dark body { background-color: theme('colors.on-background'); color: theme('colors.surface-bright'); }
+    </style>
+</head>
+<body class="bg-background dark:bg-on-background text-on-background dark:text-surface-bright font-body-base antialiased">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full overflow-y-auto flex flex-col docked left-0 h-screen w-[240px] border-r border-outline-variant dark:border-outline flat no shadows bg-surface dark:bg-on-background hidden md:flex z-50">
+<div class="p-6">
+<h2 class="font-h2 text-h2 font-bold text-on-surface dark:text-surface-bright">LuxAdmin</h2>
+<p class="font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant mt-1">Premium Jewellery</p>
+</div>
+<ul class="flex flex-col gap-1 px-4 mt-4">
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">dashboard</span>Dashboard</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">diamond</span>Products</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">category</span>Categories</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container font-medium hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">shopping_cart</span>Orders</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">local_offer</span>Coupons</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">article</span>Blog</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">rate_review</span>Reviews</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">group</span>Customers</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">admin_panel_settings</span>Admins</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">analytics</span>Reports</a></li>
+<li><a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 font-body-sm text-body-sm" href="#"><span class="material-symbols-outlined">settings</span>Settings</a></li>
+</ul>
+</nav>
+<!-- TopNavBar -->
+<header class="flex justify-between items-center h-16 px-6 sticky top-0 z-40 ml-0 md:ml-[240px] docked top-0 full-width border-b border-outline-variant dark:border-outline flat no shadows bg-surface-container-lowest dark:bg-on-background transition-all duration-150">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-primary dark:text-on-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant dark:text-on-secondary-fixed-variant font-label-md text-label-md">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-high dark:bg-surface-variant border-none rounded-DEFAULT text-primary dark:text-on-primary placeholder:text-on-surface-variant dark:placeholder:text-on-secondary-fixed-variant focus:ring-1 focus:ring-primary dark:focus:ring-inverse-primary font-body-sm text-body-sm w-64" placeholder="Search orders..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-element-gap">
+<button class="p-2 rounded-DEFAULT text-primary dark:text-on-primary hover:bg-surface-container dark:hover:bg-surface-variant transition-all duration-150">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="p-2 rounded-DEFAULT text-primary dark:text-on-primary hover:bg-surface-container dark:hover:bg-surface-variant transition-all duration-150 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="h-6 w-px bg-outline-variant dark:bg-outline mx-2"></div>
+<button class="font-label-md text-label-md text-primary dark:text-on-primary hover:bg-surface-container dark:hover:bg-surface-variant px-3 py-2 rounded-DEFAULT transition-all duration-150">Logout</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant dark:border-outline">
+<img alt="Admin Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate admin, minimal background, high quality lighting, suited for a high-end SaaS dashboard avatar placeholder. Soft monochrome aesthetic preferred." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYnegp2AN6_3agRxyUJLV0pNae1fVBZNaO1G3RMZE53ME2CMRPhenZYlomJSL6DPICE4EeNgMg8mMxGQlPUcNncesgJSm9-5WLxF08ZiXdTcH-C59XqKAqIC2qLoJii3LU7kN1CkiAD9LPCFNA42-HcP7_ASIp-MyMWDI5rHB6Sm6BNA562q2wYqjgezVD5SKlK14VJ6L1ndqR-YiPQF34CARsKtVylFsprz_YHPp_8RwvAg_6bmAH-7xFWGjJGljmuttnDdOd0CE"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-0 md:ml-[240px] p-container-padding flex flex-col gap-section-gap min-h-[calc(100vh-64px)]">
+<!-- Header & Filters -->
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-end">
+<h1 class="font-h1 text-h1 text-primary dark:text-on-primary">Orders</h1>
+<button class="bg-primary dark:bg-on-primary text-on-primary dark:text-primary px-4 py-2 rounded-DEFAULT font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span> Export CSV
+                </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-surface-container-lowest dark:bg-surface-variant border border-outline-variant dark:border-outline rounded-DEFAULT">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant block mb-1">Search Order</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-on-surface-variant dark:text-on-secondary-fixed-variant">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 bg-background dark:bg-on-background border border-outline-variant dark:border-outline rounded-DEFAULT font-body-sm text-body-sm text-primary dark:text-on-primary focus:ring-1 focus:ring-primary dark:focus:ring-inverse-primary" placeholder="Order ID or Customer" type="text"/>
+</div>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant block mb-1">Order Status</label>
+<select class="w-full px-3 py-1.5 bg-background dark:bg-on-background border border-outline-variant dark:border-outline rounded-DEFAULT font-body-sm text-body-sm text-primary dark:text-on-primary focus:ring-1 focus:ring-primary dark:focus:ring-inverse-primary appearance-none">
+<option value="">All Statuses</option>
+<option value="placed">Placed</option>
+<option value="confirmed">Confirmed</option>
+<option value="shipped">Shipped</option>
+<option value="delivered">Delivered</option>
+<option value="cancelled">Cancelled</option>
+</select>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant block mb-1">Payment Status</label>
+<select class="w-full px-3 py-1.5 bg-background dark:bg-on-background border border-outline-variant dark:border-outline rounded-DEFAULT font-body-sm text-body-sm text-primary dark:text-on-primary focus:ring-1 focus:ring-primary dark:focus:ring-inverse-primary appearance-none">
+<option value="">All Payments</option>
+<option value="paid">Paid</option>
+<option value="pending">Pending</option>
+<option value="failed">Failed</option>
+</select>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant block mb-1">Date Range</label>
+<input class="w-full px-3 py-1.5 bg-background dark:bg-on-background border border-outline-variant dark:border-outline rounded-DEFAULT font-body-sm text-body-sm text-primary dark:text-on-primary focus:ring-1 focus:ring-primary dark:focus:ring-inverse-primary" type="date"/>
+</div>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface-container-lowest dark:bg-surface-variant border border-outline-variant dark:border-outline rounded-DEFAULT overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant dark:border-outline bg-surface-container-high dark:bg-background/50">
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant font-medium whitespace-nowrap">Order #</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant font-medium whitespace-nowrap">Date</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant font-medium whitespace-nowrap">Customer</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant font-medium whitespace-nowrap text-right">Total (₹)</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant font-medium whitespace-nowrap">Payment</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant font-medium whitespace-nowrap text-center">Order Status</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant font-medium whitespace-nowrap text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant dark:divide-outline font-body-sm text-body-sm">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low dark:hover:bg-background transition-colors group">
+<td class="py-table-cell-py px-4 font-mono text-mono text-primary dark:text-inverse-primary">ORD-8821</td>
+<td class="py-table-cell-py px-4 text-on-surface-variant dark:text-on-secondary-fixed-variant">Oct 24, 2023<br/><span class="text-[11px]">14:32 PM</span></td>
+<td class="py-table-cell-py px-4">
+<div class="font-medium text-primary dark:text-on-primary">Eleanor Vance</div>
+<div class="text-[11px] text-on-surface-variant dark:text-on-secondary-fixed-variant">eleanor@example.com</div>
+</td>
+<td class="py-table-cell-py px-4 text-right font-medium text-primary dark:text-on-primary">₹ 45,999.00</td>
+<td class="py-table-cell-py px-4">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#e6f4ea] text-[#137333] dark:bg-[#137333]/20 dark:text-[#81c995] border border-[#ceead6] dark:border-[#137333]/30">Paid</span>
+<span class="text-[11px] text-on-surface-variant dark:text-on-secondary-fixed-variant">Razorpay</span>
+</div>
+</td>
+<td class="py-table-cell-py px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#e8f0fe] text-[#1a73e8] dark:bg-[#1a73e8]/20 dark:text-[#8ab4f8] border border-[#d2e3fc] dark:border-[#1a73e8]/30">Shipped</span>
+</td>
+<td class="py-table-cell-py px-4 text-right">
+<button class="p-1.5 text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-on-primary rounded-DEFAULT hover:bg-surface-dim dark:hover:bg-surface-tint transition-colors">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low dark:hover:bg-background transition-colors group bg-surface-container-lowest/50 dark:bg-background/20">
+<td class="py-table-cell-py px-4 font-mono text-mono text-primary dark:text-inverse-primary">ORD-8820</td>
+<td class="py-table-cell-py px-4 text-on-surface-variant dark:text-on-secondary-fixed-variant">Oct 24, 2023<br/><span class="text-[11px]">11:15 AM</span></td>
+<td class="py-table-cell-py px-4">
+<div class="font-medium text-primary dark:text-on-primary">Theodora Crain</div>
+<div class="text-[11px] text-on-surface-variant dark:text-on-secondary-fixed-variant">theo.c@example.com</div>
+</td>
+<td class="py-table-cell-py px-4 text-right font-medium text-primary dark:text-on-primary">₹ 12,450.00</td>
+<td class="py-table-cell-py px-4">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#fef7e0] text-[#b06000] dark:bg-[#f29900]/20 dark:text-[#fde293] border border-[#fde293] dark:border-[#f29900]/30">Pending</span>
+<span class="text-[11px] text-on-surface-variant dark:text-on-secondary-fixed-variant">COD</span>
+</div>
+</td>
+<td class="py-table-cell-py px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#f3f4f6] text-[#374151] dark:bg-[#374151]/40 dark:text-[#d1d5db] border border-[#e5e7eb] dark:border-[#374151]/50">Placed</span>
+</td>
+<td class="py-table-cell-py px-4 text-right">
+<button class="p-1.5 text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-on-primary rounded-DEFAULT hover:bg-surface-dim dark:hover:bg-surface-tint transition-colors">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low dark:hover:bg-background transition-colors group">
+<td class="py-table-cell-py px-4 font-mono text-mono text-primary dark:text-inverse-primary">ORD-8819</td>
+<td class="py-table-cell-py px-4 text-on-surface-variant dark:text-on-secondary-fixed-variant">Oct 23, 2023<br/><span class="text-[11px]">09:45 AM</span></td>
+<td class="py-table-cell-py px-4">
+<div class="font-medium text-primary dark:text-on-primary">Luke Crain</div>
+<div class="text-[11px] text-on-surface-variant dark:text-on-secondary-fixed-variant">luke@example.com</div>
+</td>
+<td class="py-table-cell-py px-4 text-right font-medium text-primary dark:text-on-primary">₹ 89,000.00</td>
+<td class="py-table-cell-py px-4">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#fce8e6] text-[#c5221f] dark:bg-[#c5221f]/20 dark:text-[#f28b82] border border-[#fad2cf] dark:border-[#c5221f]/30">Failed</span>
+<span class="text-[11px] text-on-surface-variant dark:text-on-secondary-fixed-variant">Razorpay</span>
+</div>
+</td>
+<td class="py-table-cell-py px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#fce8e6] text-[#c5221f] dark:bg-[#c5221f]/20 dark:text-[#f28b82] border border-[#fad2cf] dark:border-[#c5221f]/30">Cancelled</span>
+</td>
+<td class="py-table-cell-py px-4 text-right">
+<button class="p-1.5 text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-on-primary rounded-DEFAULT hover:bg-surface-dim dark:hover:bg-surface-tint transition-colors">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low dark:hover:bg-background transition-colors group bg-surface-container-lowest/50 dark:bg-background/20">
+<td class="py-table-cell-py px-4 font-mono text-mono text-primary dark:text-inverse-primary">ORD-8818</td>
+<td class="py-table-cell-py px-4 text-on-surface-variant dark:text-on-secondary-fixed-variant">Oct 22, 2023<br/><span class="text-[11px]">16:20 PM</span></td>
+<td class="py-table-cell-py px-4">
+<div class="font-medium text-primary dark:text-on-primary">Steven Dudley</div>
+<div class="text-[11px] text-on-surface-variant dark:text-on-secondary-fixed-variant">steve.d@example.com</div>
+</td>
+<td class="py-table-cell-py px-4 text-right font-medium text-primary dark:text-on-primary">₹ 215,500.00</td>
+<td class="py-table-cell-py px-4">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#e6f4ea] text-[#137333] dark:bg-[#137333]/20 dark:text-[#81c995] border border-[#ceead6] dark:border-[#137333]/30">Paid</span>
+<span class="text-[11px] text-on-surface-variant dark:text-on-secondary-fixed-variant">Bank Transfer</span>
+</div>
+</td>
+<td class="py-table-cell-py px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#e6f4ea] text-[#137333] dark:bg-[#137333]/20 dark:text-[#81c995] border border-[#ceead6] dark:border-[#137333]/30">Delivered</span>
+</td>
+<td class="py-table-cell-py px-4 text-right">
+<button class="p-1.5 text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-on-primary rounded-DEFAULT hover:bg-surface-dim dark:hover:bg-surface-tint transition-colors">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-4 py-3 border-t border-outline-variant dark:border-outline flex items-center justify-between bg-surface-container-lowest dark:bg-surface-variant">
+<div class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-secondary-fixed-variant">
+                    Showing <span class="font-medium text-primary dark:text-on-primary">1</span> to <span class="font-medium text-primary dark:text-on-primary">10</span> of <span class="font-medium text-primary dark:text-on-primary">97</span> results
+                </div>
+<div class="flex items-center gap-1">
+<button class="px-2 py-1 border border-outline-variant dark:border-outline rounded-DEFAULT text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-dim dark:hover:bg-surface-tint disabled:opacity-50 disabled:cursor-not-allowed flex items-center" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 border border-primary dark:border-inverse-primary bg-primary dark:bg-on-primary text-on-primary dark:text-primary rounded-DEFAULT font-label-sm text-label-sm">1</button>
+<button class="px-3 py-1 border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-surface-variant text-primary dark:text-on-primary hover:bg-surface-dim dark:hover:bg-surface-tint rounded-DEFAULT font-label-sm text-label-sm transition-colors">2</button>
+<button class="px-3 py-1 border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-surface-variant text-primary dark:text-on-primary hover:bg-surface-dim dark:hover:bg-surface-tint rounded-DEFAULT font-label-sm text-label-sm transition-colors">3</button>
+<span class="px-2 text-on-surface-variant dark:text-on-secondary-fixed-variant">...</span>
+<button class="px-3 py-1 border border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-surface-variant text-primary dark:text-on-primary hover:bg-surface-dim dark:hover:bg-surface-tint rounded-DEFAULT font-label-sm text-label-sm transition-colors">10</button>
+<button class="px-2 py-1 border border-outline-variant dark:border-outline rounded-DEFAULT text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-dim dark:hover:bg-surface-tint flex items-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

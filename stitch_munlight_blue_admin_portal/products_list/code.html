@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Products | LuxAdmin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1b22",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e8e7f1",
+                        "surface-dim": "#dad9e3",
+                        "on-surface-variant": "#47464a",
+                        "on-surface": "#1a1b22",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5f5e61",
+                        "on-secondary-container": "#656467",
+                        "surface": "#fbf8ff",
+                        "primary-fixed": "#e5e1e4",
+                        "secondary-fixed": "#e4e1e5",
+                        "on-secondary-fixed-variant": "#47464a",
+                        "on-error": "#ffffff",
+                        "outline": "#78767b",
+                        "secondary-container": "#e4e1e5",
+                        "on-tertiary-fixed": "#1f1a1a",
+                        "tertiary-fixed-dim": "#cec4c4",
+                        "primary-fixed-dim": "#c8c6c8",
+                        "on-primary-fixed": "#1c1b1d",
+                        "secondary-fixed-dim": "#c8c6c9",
+                        "error": "#ba1a1a",
+                        "primary": "#000000",
+                        "surface-container-highest": "#e3e1ec",
+                        "on-primary-container": "#858386",
+                        "on-tertiary-container": "#8a8282",
+                        "surface-tint": "#5f5e60",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fbf8ff",
+                        "on-tertiary-fixed-variant": "#4c4545",
+                        "surface-variant": "#e3e1ec",
+                        "inverse-on-surface": "#f1effa",
+                        "surface-container-low": "#f4f2fd",
+                        "on-primary-fixed-variant": "#474649",
+                        "background": "#fbf8ff",
+                        "tertiary-container": "#1f1a1a",
+                        "primary-container": "#1c1b1d",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#000000",
+                        "outline-variant": "#c8c5ca",
+                        "inverse-primary": "#c8c6c8",
+                        "inverse-surface": "#2f3038",
+                        "on-secondary-fixed": "#1b1b1e",
+                        "tertiary-fixed": "#ebe0df",
+                        "surface-container": "#eeedf7",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "table-cell-py": "0.5rem",
+                        "sidebar-width": "240px",
+                        "element-gap": "0.75rem",
+                        "container-padding": "2rem",
+                        "section-gap": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "mono": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "h2": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h3": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-base": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "mono": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "h2": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "h3": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-base": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "h1": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #47464a;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex h-screen overflow-hidden dark:bg-background dark:text-on-background">
+<!-- SideNavBar -->
+<nav class="bg-surface dark:bg-on-background font-body-sm text-body-sm docked left-0 h-screen w-[240px] border-r border-outline-variant dark:border-outline flat no shadows fixed left-0 top-0 h-full overflow-y-auto flex flex-col hidden md:flex z-50 transition-all duration-200 custom-scrollbar">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high dark:bg-surface-variant flex items-center justify-center overflow-hidden flex-shrink-0">
+<img alt="Jewellery Brand Logo" class="w-full h-full object-cover" data-alt="A minimalist, modern corporate logo featuring an abstract geometric diamond shape in soft silver tones. The logo is set against a dark grey background, representing premium jewellery and high-end aesthetics. The lighting is subtle, creating a polished, professional look suitable for an internal corporate dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqpyC8M0F-9xGbeJRAUePu_m6wuLHaSxq9NaDN2jmCkPZyHuXOHwXU_xg0lWh8-QHSiIqkuw72kHqWZ8Gib5YIbrSX63-seBwhneK51LGlfIh3xNSblmSHpy7i7VkeQfisfS6kyoCep-F8edZ1z9tul9hJ9L-jVC2tWlJZWgdwQuOrGrR2_cmTKjy6Li97BCwjLHLhxI-PyyhCL8LSUHnzdxy8SdRKlqajwSJYnPd-YVidaxVn2QDqxsfSUIAmkxFfAi9YQOQVTXU"/>
+</div>
+<div>
+<h1 class="font-h2 text-h2 font-bold text-on-surface dark:text-surface-bright">LuxAdmin</h1>
+<p class="font-label-sm text-label-sm text-secondary dark:text-on-secondary-fixed-variant">Premium Jewellery</p>
+</div>
+</div>
+</div>
+<div class="flex-1 py-4 px-3 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container font-medium transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="diamond">diamond</span>
+<span>Products</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="category">category</span>
+<span>Categories</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+<span>Orders</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="local_offer">local_offer</span>
+<span>Coupons</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="article">article</span>
+<span>Blog</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="rate_review">rate_review</span>
+<span>Reviews</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span>Customers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span>Admins</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="analytics">analytics</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 mt-auto" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col min-w-0 md:ml-[240px]">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background font-label-md text-label-md docked top-0 full-width border-b border-outline-variant dark:border-outline flat no shadows flex justify-between items-center h-16 px-6 sticky top-0 z-40 transition-all duration-150">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container dark:hover:bg-surface-variant p-2 rounded-lg transition-all duration-150">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="relative w-64 hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary dark:text-on-secondary-fixed-variant text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low dark:bg-surface-container rounded-lg border-none focus:ring-2 focus:ring-primary dark:focus:ring-on-primary text-primary dark:text-on-primary placeholder:text-secondary dark:placeholder:text-on-secondary-fixed-variant font-body-sm text-body-sm" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container dark:hover:bg-surface-variant transition-all duration-150">
+<span class="material-symbols-outlined text-[20px]" data-icon="dark_mode">dark_mode</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container dark:hover:bg-surface-variant transition-all duration-150 relative">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="h-6 w-px bg-outline-variant dark:bg-outline mx-2"></div>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container dark:hover:bg-surface-variant transition-all duration-150">
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full object-cover" data-alt="A professional headshot of an administrator wearing a sleek black turtleneck against a dark, corporate office background. The lighting is dramatic yet soft, highlighting a modern minimal aesthetic consistent with high-end brand management. The image conveys authority and precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKtF_OVwjsY4fiNDE_usjLA_fc2BG6T-qn-U_y7VOJu6np3fJ1_TwrvBiY7HRuzXnu5f5JGKCTuQjIwjpKaJOytMi_BEEPpXrF0Uo7d7rZlZxHeUhdqcP7cjbkkty23drAK8bF-Y_lQViNLJLFuc35Vm81rrD--hHmVrawzius1Kke5ButjfwwBKhiVIDq8dQsKB1LyOPQSEy0plkpRoT-gO3lA23ZXLnZtKm6TN2xb9j7BBHm86J7G-8XRowfy7nDn9zTWLotmAM"/>
+<span class="hidden lg:block">Logout</span>
+</button>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 overflow-y-auto p-container-padding bg-background dark:bg-background custom-scrollbar">
+<!-- Header Section -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-section-gap gap-4">
+<div>
+<h2 class="font-h1 text-h1 text-on-surface dark:text-on-primary">Products</h2>
+<p class="font-body-base text-body-base text-secondary dark:text-on-secondary-container mt-1">Manage your jewelry inventory and listings.</p>
+</div>
+<button class="bg-primary dark:bg-on-primary text-on-primary dark:text-primary px-4 py-2.5 rounded-lg font-label-md text-label-md flex items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Add Product
+                </button>
+</div>
+<!-- Filters & Search Bar -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-xl p-4 mb-element-gap flex flex-col lg:flex-row gap-4 items-center justify-between">
+<div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto flex-1">
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary dark:text-on-secondary-fixed-variant text-[18px]">search</span>
+<input class="w-full pl-9 pr-4 py-2 bg-transparent border border-outline-variant dark:border-outline rounded-lg focus:ring-1 focus:ring-primary dark:focus:ring-on-primary focus:border-primary dark:focus:border-on-primary text-primary dark:text-on-primary placeholder:text-secondary dark:placeholder:text-on-secondary-container font-body-sm text-body-sm" placeholder="Search by name or SKU..." type="text"/>
+</div>
+<select class="bg-transparent border border-outline-variant dark:border-outline rounded-lg py-2 pl-3 pr-8 focus:ring-1 focus:ring-primary dark:focus:ring-on-primary focus:border-primary dark:focus:border-on-primary text-primary dark:text-on-primary font-body-sm text-body-sm appearance-none">
+<option value="">All Categories</option>
+<option value="rings">Rings</option>
+<option value="necklaces">Necklaces</option>
+<option value="earrings">Earrings</option>
+<option value="bracelets">Bracelets</option>
+</select>
+<select class="bg-transparent border border-outline-variant dark:border-outline rounded-lg py-2 pl-3 pr-8 focus:ring-1 focus:ring-primary dark:focus:ring-on-primary focus:border-primary dark:focus:border-on-primary text-primary dark:text-on-primary font-body-sm text-body-sm appearance-none">
+<option value="">Status</option>
+<option value="active">Active</option>
+<option value="draft">Draft</option>
+<option value="archived">Archived</option>
+</select>
+</div>
+<div class="flex flex-wrap gap-2 w-full lg:w-auto justify-start lg:justify-end">
+<button class="px-3 py-1.5 rounded-full border border-outline-variant dark:border-outline text-secondary dark:text-on-secondary-container font-label-sm text-label-sm hover:bg-surface-container dark:hover:bg-surface-variant transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">star</span> Featured
+                    </button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant dark:border-outline text-secondary dark:text-on-secondary-container font-label-sm text-label-sm hover:bg-surface-container dark:hover:bg-surface-variant transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">fiber_new</span> New
+                    </button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant dark:border-outline text-secondary dark:text-on-secondary-container font-label-sm text-label-sm hover:bg-surface-container dark:hover:bg-surface-variant transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> Bestseller
+                    </button>
+<button class="px-3 py-1.5 rounded-full bg-primary-container dark:bg-on-primary-fixed text-on-primary-container dark:text-on-primary font-label-sm text-label-sm border border-transparent flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">handyman</span> Handmade
+                    </button>
+</div>
+</div>
+<!-- Bulk Actions Bar (Hidden by default, shown when items selected) -->
+<div class="bg-surface-container-high dark:bg-surface-variant rounded-xl p-3 mb-element-gap flex items-center justify-between opacity-50 pointer-events-none transition-opacity duration-200" id="bulk-actions">
+<div class="flex items-center gap-3">
+<span class="font-label-sm text-label-sm text-on-surface dark:text-on-primary">0 items selected</span>
+</div>
+<div class="flex gap-2">
+<button class="text-secondary dark:text-on-secondary-fixed-variant hover:text-on-surface dark:hover:text-on-primary p-1 rounded transition-colors" title="Change Status">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+</button>
+<button class="text-error hover:text-on-error-container p-1 rounded transition-colors" title="Delete Selected">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface dark:bg-surface-container-lowest border border-outline-variant dark:border-outline rounded-xl overflow-hidden flex flex-col">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant dark:border-outline bg-surface-container-low dark:bg-surface-container/50">
+<th class="py-3 px-4 w-12"><input class="rounded border-outline-variant text-primary focus:ring-primary bg-transparent" type="checkbox"/></th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-container w-16">Image</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-container">Product Name</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-container">SKU</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-container">Category</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-container text-right">Price (₹)</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-container text-right">Stock</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-container text-center">Status</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-secondary dark:text-on-secondary-container text-right w-24">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm divide-y divide-outline-variant dark:divide-outline">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low dark:hover:bg-surface-container/30 transition-colors group">
+<td class="py-table-cell-py px-4"><input class="rounded border-outline-variant text-primary focus:ring-primary bg-transparent" type="checkbox"/></td>
+<td class="py-table-cell-py px-4">
+<div class="w-10 h-10 rounded border border-outline-variant dark:border-outline overflow-hidden bg-surface-container">
+<img alt="Diamond Ring" class="w-full h-full object-cover" data-alt="A close-up studio shot of a high-end diamond engagement ring on a dark, reflective surface. The lighting is sharp, highlighting the brilliant cut of the diamond and the sleek silver band. The mood is luxurious and minimalist, fitting perfectly within a premium jewelry corporate dashboard dark mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN5IlQYWeY72L3FAX4hTDRVwNg35lDGGAJ-_w_vFX1WfvJnUfQdoIVBmANqTw_F0i2xk85ch-Kd2p_1WKImvLs1GpBZqVaLj9hpyUdvT2lc82C9rz4MY_stO5S0NGbEwypVAMTJDkNGb2oGGqGAvWG3qsj9KMvX7VQVa1gaQ0KP9UQWCeFxcW2vb56Jh7u7rnRRA83SUHR_6PJcG48d8YlibZPrRjor5P6nx4fXC-8chnCDZHUC-qh-kB6y5ObH-nPRv01sQS7FnU"/>
+</div>
+</td>
+<td class="py-table-cell-py px-4">
+<div class="font-medium text-on-surface dark:text-on-primary">Solitaire Diamond Ring</div>
+<div class="flex gap-1 mt-1 text-secondary dark:text-on-secondary-container">
+<span class="material-symbols-outlined text-[14px]" title="Featured">star</span>
+<span class="material-symbols-outlined text-[14px]" title="Bestseller">trending_up</span>
+</div>
+</td>
+<td class="py-table-cell-py px-4 font-mono text-mono text-secondary dark:text-on-secondary-container">RNG-001-SLV</td>
+<td class="py-table-cell-py px-4 text-on-surface dark:text-on-primary">Rings</td>
+<td class="py-table-cell-py px-4 text-right">
+<div class="text-on-surface dark:text-on-primary font-medium">₹45,000</div>
+<div class="text-secondary dark:text-on-secondary-container line-through text-[11px]">₹55,000</div>
+</td>
+<td class="py-table-cell-py px-4 text-right">
+<span class="text-on-surface dark:text-on-primary">24</span>
+</td>
+<td class="py-table-cell-py px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/20">Active</span>
+</td>
+<td class="py-table-cell-py px-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-secondary dark:text-on-secondary-container hover:text-primary dark:hover:text-on-primary rounded hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-secondary dark:text-on-secondary-container hover:text-primary dark:hover:text-on-primary rounded hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" title="Toggle Visibility">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1.5 text-error hover:text-on-error-container rounded hover:bg-error-container/10 transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 (Low Stock) -->
+<tr class="hover:bg-surface-container-low dark:hover:bg-surface-container/30 transition-colors group">
+<td class="py-table-cell-py px-4"><input class="rounded border-outline-variant text-primary focus:ring-primary bg-transparent" type="checkbox"/></td>
+<td class="py-table-cell-py px-4">
+<div class="w-10 h-10 rounded border border-outline-variant dark:border-outline overflow-hidden bg-surface-container">
+<img alt="Gold Necklace" class="w-full h-full object-cover" data-alt="A macro shot of a delicate gold chain necklace resting on a textured dark velvet surface. The golden hues contrast beautifully with the deep black background, emphasizing the intricate links of the chain. The lighting is soft and focused, fitting for a minimalist corporate inventory interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHPAIWvwD8L2fS7Z56LycOZUyMZW1TkeHzkUwp7us8DzafuCzFAfvvSpNuJu9nHzna7Ju_gq0OZy6YPddtgWa0PrNf4wJrAXqAVPht-pjiTMSJs-_RdSpdyY2A2_DzQf2JjTCuBI013Xl2ZpHsnNAs3mepqaBNu9F851jVWq2OZ0Snr-B_gEwzLvUa5dCVsV4w3FtfXpf6yj-VTlL9nh20yEr0UdR4IxF4oUfAy1DTiEeHVq2i30z79OOGwtUl545sW9-w7Mh0QyI"/>
+</div>
+</td>
+<td class="py-table-cell-py px-4">
+<div class="font-medium text-on-surface dark:text-on-primary">Vintage Gold Chain</div>
+<div class="flex gap-1 mt-1 text-secondary dark:text-on-secondary-container">
+<span class="material-symbols-outlined text-[14px]" title="Handmade">handyman</span>
+</div>
+</td>
+<td class="py-table-cell-py px-4 font-mono text-mono text-secondary dark:text-on-secondary-container">NCK-042-GLD</td>
+<td class="py-table-cell-py px-4 text-on-surface dark:text-on-primary">Necklaces</td>
+<td class="py-table-cell-py px-4 text-right">
+<div class="text-on-surface dark:text-on-primary font-medium">₹12,500</div>
+</td>
+<td class="py-table-cell-py px-4 text-right">
+<span class="text-error font-medium">2</span>
+</td>
+<td class="py-table-cell-py px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/20">Active</span>
+</td>
+<td class="py-table-cell-py px-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-secondary dark:text-on-secondary-container hover:text-primary dark:hover:text-on-primary rounded hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-secondary dark:text-on-secondary-container hover:text-primary dark:hover:text-on-primary rounded hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" title="Toggle Visibility">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1.5 text-error hover:text-on-error-container rounded hover:bg-error-container/10 transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 (Draft) -->
+<tr class="hover:bg-surface-container-low dark:hover:bg-surface-container/30 transition-colors group opacity-70">
+<td class="py-table-cell-py px-4"><input class="rounded border-outline-variant text-primary focus:ring-primary bg-transparent" type="checkbox"/></td>
+<td class="py-table-cell-py px-4">
+<div class="w-10 h-10 rounded border border-outline-variant dark:border-outline overflow-hidden bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">image</span>
+</div>
+</td>
+<td class="py-table-cell-py px-4">
+<div class="font-medium text-on-surface dark:text-on-primary">Pearl Drop Earrings</div>
+<div class="flex gap-1 mt-1 text-secondary dark:text-on-secondary-container">
+<span class="material-symbols-outlined text-[14px]" title="New">fiber_new</span>
+</div>
+</td>
+<td class="py-table-cell-py px-4 font-mono text-mono text-secondary dark:text-on-secondary-container">EAR-088-PRL</td>
+<td class="py-table-cell-py px-4 text-on-surface dark:text-on-primary">Earrings</td>
+<td class="py-table-cell-py px-4 text-right">
+<div class="text-on-surface dark:text-on-primary font-medium">₹8,900</div>
+<div class="text-secondary dark:text-on-secondary-container line-through text-[11px]">₹10,500</div>
+</td>
+<td class="py-table-cell-py px-4 text-right">
+<span class="text-on-surface dark:text-on-primary">0</span>
+</td>
+<td class="py-table-cell-py px-4 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-container-highest text-secondary border border-outline-variant">Draft</span>
+</td>
+<td class="py-table-cell-py px-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-secondary dark:text-on-secondary-container hover:text-primary dark:hover:text-on-primary rounded hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 text-secondary dark:text-on-secondary-container hover:text-primary dark:hover:text-on-primary rounded hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" title="Toggle Visibility">
+<span class="material-symbols-outlined text-[18px]">visibility_off</span>
+</button>
+<button class="p-1.5 text-error hover:text-on-error-container rounded hover:bg-error-container/10 transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="border-t border-outline-variant dark:border-outline p-4 flex items-center justify-between bg-surface dark:bg-surface-container-lowest">
+<div class="text-secondary dark:text-on-secondary-container font-body-sm text-body-sm">
+                        Showing <span class="font-medium text-on-surface dark:text-on-primary">1</span> to <span class="font-medium text-on-surface dark:text-on-primary">10</span> of <span class="font-medium text-on-surface dark:text-on-primary">142</span> products
+                    </div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded text-secondary dark:text-on-secondary-container hover:bg-surface-container dark:hover:bg-surface-variant disabled:opacity-50 disabled:cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<div class="flex gap-1 hidden sm:flex">
+<button class="w-8 h-8 rounded bg-primary dark:bg-on-primary text-on-primary dark:text-primary font-label-sm text-label-sm flex items-center justify-center">1</button>
+<button class="w-8 h-8 rounded text-secondary dark:text-on-secondary-container hover:bg-surface-container dark:hover:bg-surface-variant font-label-sm text-label-sm flex items-center justify-center transition-colors">2</button>
+<button class="w-8 h-8 rounded text-secondary dark:text-on-secondary-container hover:bg-surface-container dark:hover:bg-surface-variant font-label-sm text-label-sm flex items-center justify-center transition-colors">3</button>
+<span class="w-8 h-8 flex items-center justify-center text-secondary dark:text-on-secondary-container font-label-sm text-label-sm">...</span>
+<button class="w-8 h-8 rounded text-secondary dark:text-on-secondary-container hover:bg-surface-container dark:hover:bg-surface-variant font-label-sm text-label-sm flex items-center justify-center transition-colors">15</button>
+</div>
+<button class="p-1 rounded text-secondary dark:text-on-secondary-container hover:bg-surface-container dark:hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+        // Simple script to toggle bulk actions bar for demonstration
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+            const bulkActions = document.getElementById('bulk-actions');
+            const headerCheckbox = document.querySelector('thead input[type="checkbox"]');
+            
+            function updateBulkActions() {
+                const checkedCount = document.querySelectorAll('tbody input[type="checkbox"]:checked').length;
+                if (checkedCount > 0) {
+                    bulkActions.classList.remove('opacity-50', 'pointer-events-none');
+                    bulkActions.classList.add('opacity-100');
+                    bulkActions.querySelector('span').textContent = `${checkedCount} items selected`;
+                } else {
+                    bulkActions.classList.add('opacity-50', 'pointer-events-none');
+                    bulkActions.classList.remove('opacity-100');
+                    bulkActions.querySelector('span').textContent = `0 items selected`;
+                }
+            }
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateBulkActions);
+            });
+
+            if(headerCheckbox) {
+                headerCheckbox.addEventListener('change', (e) => {
+                    checkboxes.forEach(cb => cb.checked = e.target.checked);
+                    updateBulkActions();
+                });
+            }
+        });
+    </script>
+</body></html>

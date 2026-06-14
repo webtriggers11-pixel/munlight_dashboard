@@ -6,15 +6,13 @@ import {
   PackageIcon,
   FolderTreeIcon,
   UsersIcon,
-  SparklesIcon,
+  GemIcon,
 } from "lucide-react"
 
 import { config } from "@/constants/config"
-import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -25,33 +23,31 @@ import {
 
 const navItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboardIcon },
-  { title: "Orders", url: "/orders", icon: ShoppingCartIcon },
   { title: "Products", url: "/products", icon: PackageIcon },
   { title: "Categories", url: "/categories", icon: FolderTreeIcon },
-  { title: "Users", url: "/users", icon: UsersIcon },
+  { title: "Orders", url: "/orders", icon: ShoppingCartIcon },
+  { title: "Customers", url: "/users", icon: UsersIcon },
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { pathname } = useLocation()
 
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-            >
-              <NavLink to="/">
-                <SparklesIcon className="size-5!" />
-                <span className="text-base font-semibold">
-                  {config.brand.name}
-                </span>
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-2">
+        <div className="flex items-center gap-3">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-sidebar-accent text-sidebar-accent-foreground">
+            <GemIcon className="size-5" />
+          </div>
+          <div className="flex flex-col group-data-[collapsible=icon]:hidden">
+            <span className="text-base font-semibold leading-tight text-sidebar-primary">
+              {config.brand.name}
+            </span>
+            <span className="text-xs text-sidebar-foreground/70">
+              Premium Jewellery
+            </span>
+          </div>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -81,9 +77,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser />
-      </SidebarFooter>
     </Sidebar>
   )
 }

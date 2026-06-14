@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LuxAdmin - Blog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1b22",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e8e7f1",
+                        "surface-dim": "#dad9e3",
+                        "on-surface-variant": "#47464a",
+                        "on-surface": "#1a1b22",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5f5e61",
+                        "on-secondary-container": "#656467",
+                        "surface": "#fbf8ff",
+                        "primary-fixed": "#e5e1e4",
+                        "secondary-fixed": "#e4e1e5",
+                        "on-secondary-fixed-variant": "#47464a",
+                        "on-error": "#ffffff",
+                        "outline": "#78767b",
+                        "secondary-container": "#e4e1e5",
+                        "on-tertiary-fixed": "#1f1a1a",
+                        "tertiary-fixed-dim": "#cec4c4",
+                        "primary-fixed-dim": "#c8c6c8",
+                        "on-primary-fixed": "#1c1b1d",
+                        "secondary-fixed-dim": "#c8c6c9",
+                        "error": "#ba1a1a",
+                        "primary": "#000000",
+                        "surface-container-highest": "#e3e1ec",
+                        "on-primary-container": "#858386",
+                        "on-tertiary-container": "#8a8282",
+                        "surface-tint": "#5f5e60",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fbf8ff",
+                        "on-tertiary-fixed-variant": "#4c4545",
+                        "surface-variant": "#e3e1ec",
+                        "inverse-on-surface": "#f1effa",
+                        "surface-container-low": "#f4f2fd",
+                        "on-primary-fixed-variant": "#474649",
+                        "background": "#fbf8ff",
+                        "tertiary-container": "#1f1a1a",
+                        "primary-container": "#1c1b1d",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#000000",
+                        "outline-variant": "#c8c5ca",
+                        "inverse-primary": "#c8c6c8",
+                        "inverse-surface": "#2f3038",
+                        "on-secondary-fixed": "#1b1b1e",
+                        "tertiary-fixed": "#ebe0df",
+                        "surface-container": "#eeedf7",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "table-cell-py": "0.5rem",
+                        "sidebar-width": "240px",
+                        "element-gap": "0.75rem",
+                        "container-padding": "2rem",
+                        "section-gap": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "mono": ["JetBrains Mono"],
+                        "body-sm": ["Inter"],
+                        "h2": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h3": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-base": ["Inter"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "mono": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "h2": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "h3": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "body-base": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "h1": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        .dark body { background-color: theme('colors.on-background'); color: theme('colors.surface'); }
+        
+        /* Custom Scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: theme('colors.outline-variant');
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background-color: theme('colors.outline');
+        }
+        
+        .editor-content:empty:before {
+            content: attr(placeholder);
+            color: theme('colors.outline');
+            pointer-events: none;
+            display: block;
+        }
+    </style>
+</head>
+<body class="font-body-base text-body-base bg-surface dark:bg-on-background flex h-screen overflow-hidden text-on-surface dark:text-surface-bright transition-colors duration-200">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col bg-surface dark:bg-on-background border-r border-outline-variant dark:border-outline w-[240px] h-full fixed left-0 top-0 overflow-y-auto z-50">
+<div class="p-6 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container dark:bg-primary-container flex items-center justify-center overflow-hidden">
+<!-- Brand Avatar/Logo placeholder -->
+<img alt="Jewellery Brand Logo" class="object-cover w-full h-full" data-alt="A stylized, minimalist logo for a premium jewellery brand, featuring a delicate geometric diamond or ring shape in stark black against a pure white background. The image should be incredibly crisp, high contrast, and perfectly centered, suitable for an administrative dashboard top-level brand icon. The mood is luxurious yet understated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvnhsnrbkhvLNNcM5KHawxPE2re8nxuvDev3FWahGysii6rIG-r9C-14RtnRde3sHPU6y5uWaD9VjNSPVIwySz9XD-xhcwctqbNCTXXex_o9QIVMW67RrXY7p_G7hHiVFtre4RgbkD1oEIqWbIM6oz4jC8BwHwVxUqf5X8HfA2Hv-90J3BKg_b0X9pgTYxed_WhBsAkxhCvAVFUTIwSOQS5_qhz46VRJyEfAWoWCOLVesc8zVtrGAv2cyjOd2JKs3EKL_GH-UNcBE"/>
+</div>
+<div>
+<h1 class="font-h2 text-h2 font-bold text-on-surface dark:text-surface-bright">LuxAdmin</h1>
+<p class="font-label-sm text-label-sm text-secondary dark:text-outline">Premium Jewellery</p>
+</div>
+</div>
+</div>
+<div class="flex-1 py-4 px-3 space-y-1">
+<!-- Navigation Items -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">diamond</span>
+<span>Products</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">category</span>
+<span>Categories</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+<span>Orders</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">local_offer</span>
+<span>Coupons</span>
+</a>
+<!-- Active State: Blog -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container font-medium transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">article</span>
+<span>Blog</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">rate_review</span>
+<span>Reviews</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">group</span>
+<span>Customers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">admin_panel_settings</span>
+<span>Admins</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">analytics</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md font-body-sm text-body-sm text-secondary dark:text-on-secondary-fixed-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Layout Area -->
+<div class="flex-1 flex flex-col ml-0 md:ml-[240px] w-full min-w-0 transition-all duration-200 relative">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-on-background border-b border-outline-variant dark:border-outline flex justify-between items-center h-16 px-6 sticky top-0 z-40 font-label-md text-label-md text-primary dark:text-on-primary transition-all duration-150">
+<!-- Left Area: Search -->
+<div class="flex items-center flex-1 max-w-md">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant dark:text-outline group-focus-within:text-primary dark:group-focus-within:text-on-primary transition-colors text-lg" style="font-variation-settings: 'FILL' 0;">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-lowest dark:bg-surface-container-low border border-outline-variant dark:border-outline rounded-lg font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary-fixed focus:border-transparent transition-all placeholder:text-outline-variant dark:placeholder:text-outline" placeholder="Search articles..." type="text"/>
+</div>
+</div>
+<!-- Right Area: Actions & Profile -->
+<div class="flex items-center gap-4 ml-auto">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container dark:hover:bg-surface-variant transition-colors duration-150 relative">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dark_mode</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container dark:hover:bg-surface-variant transition-colors duration-150 relative">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest dark:ring-on-background"></span>
+</button>
+<div class="h-6 w-[1px] bg-outline-variant dark:bg-outline mx-2"></div>
+<button class="font-label-sm text-label-sm text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-on-primary transition-colors">
+                    Logout
+                </button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest dark:bg-surface-container overflow-hidden border border-outline-variant dark:border-outline cursor-pointer hover:ring-2 ring-primary-fixed transition-all ml-2">
+<img alt="Admin Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a confident administrator. High-key lighting, stark background, monochromatic tones with deep blacks and bright whites. The subject looks directly at the camera, conveying authority and calm. Zinc styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQFyvDxaGtpJlcO6CanxuSZqNChYSnP1L5MnNasC_rWB1h8U8KgCO6nq0y6ywy-bWiJmsS3ke0sUpk4J56kByzudEV6lQKrs-KGkQwz1gEIev0dspflmpbUoJwSwCY6i-ZCUbgA8NWHWiCK9RqHxAfnYpaTbowSl_JuCjCLeTUS4mK4hHpojg1LCiDGKZ3IusN3-Jdol_XaqvR-0vyLfjCpDJNB9HrZaOWae-LYRTncSH7Q14yffur0lFEColKHg_-W03SbHQ5jAs"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto p-section-gap relative">
+<div class="max-w-7xl mx-auto flex flex-col gap-element-gap h-full">
+<!-- Page Header Area -->
+<div class="flex items-center justify-between pb-4">
+<div>
+<h2 class="font-h1 text-h1 text-on-surface dark:text-surface-bright">Blog</h2>
+<p class="font-body-sm text-body-sm text-secondary dark:text-outline mt-1">Manage articles, news, and guides.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 border border-outline-variant dark:border-outline rounded-md font-label-md text-label-md text-on-surface dark:text-surface-bright hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 0;">filter_list</span>
+                            Filter
+                        </button>
+<button class="px-4 py-2 bg-primary dark:bg-on-primary text-on-primary dark:text-primary rounded-md font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-2" id="toggle-editor-btn">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">add</span>
+                            New Post
+                        </button>
+</div>
+</div>
+<!-- Bento Grid Layout for Blog Management -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-section-gap flex-1 h-full min-h-0">
+<!-- Left Panel: Blog List (Data Table) -->
+<div class="xl:col-span-12 bg-surface-container-lowest dark:bg-surface-container border border-outline-variant dark:border-outline rounded-xl flex flex-col overflow-hidden transition-all duration-300" id="blog-list-panel">
+<!-- Table Header / Toolbar -->
+<div class="px-6 py-4 border-b border-outline-variant dark:border-outline bg-surface dark:bg-on-background/50 flex items-center justify-between sticky top-0 z-10">
+<h3 class="font-h3 text-h3 text-on-surface dark:text-surface-bright">All Posts</h3>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-secondary dark:text-outline px-2 py-1 bg-surface-container-low dark:bg-surface-container rounded">12 Published</span>
+<span class="font-label-sm text-label-sm text-secondary dark:text-outline px-2 py-1 bg-surface-container-low dark:bg-surface-container rounded">3 Drafts</span>
+</div>
+</div>
+<!-- Table Container -->
+<div class="flex-1 overflow-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low dark:bg-on-background/80 font-label-sm text-label-sm text-secondary dark:text-outline sticky top-0 z-10 backdrop-blur-sm">
+<tr>
+<th class="py-3 px-6 font-medium w-12">
+<input class="rounded border-outline-variant dark:border-outline bg-transparent text-primary dark:text-surface-bright focus:ring-primary dark:focus:ring-on-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</th>
+<th class="py-3 px-6 font-medium">Post</th>
+<th class="py-3 px-6 font-medium hidden md:table-cell">Author</th>
+<th class="py-3 px-6 font-medium">Status</th>
+<th class="py-3 px-6 font-medium hidden lg:table-cell">Date</th>
+<th class="py-3 px-6 font-medium text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm divide-y divide-outline-variant dark:divide-outline">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant/30 transition-colors group cursor-pointer" onclick="toggleEditor()">
+<td class="py-3 px-6 w-12" onclick="event.stopPropagation()">
+<input class="rounded border-outline-variant dark:border-outline bg-transparent text-primary dark:text-surface-bright focus:ring-primary dark:focus:ring-on-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-3 px-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-surface-container-high dark:bg-surface-container overflow-hidden border border-outline-variant dark:border-outline shrink-0">
+<img alt="Thumb" class="w-full h-full object-cover" data-alt="Close up of a diamond ring reflecting bright white light. Macro photography. Monochrome dark background with striking high contrast highlights on the jewel. Crisp, detailed, premium aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNg5crCh7jXQ8p6Izy5UqaaX4f5EfhyLp-qJRCo31EnDBe4pjDSuASu0jraQbCeOQ4QxeXBXwmGgJxjFhGNvJu05XfDjxVkDcBkDEWGdTWD_sZiTpq_WnCkH4Pha7PQFOZEp3zUAA5gDza0oZTsLwXZ4KduRJEuuGpZvkM6K_GdmQjcKWPvdfauHfOKrLCW-qx7orMW-r-troxa43izH51RpUGqfqf0XOWdoLig80QOoJewTqjxT93vVfAx8URIMfiwHrgiX1uWIE"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface dark:text-surface-bright group-hover:text-primary dark:group-hover:text-on-primary transition-colors">The 2024 Diamond Cut Trends</p>
+<p class="font-body-sm text-body-sm text-secondary dark:text-outline truncate max-w-[200px] xl:max-w-[300px]">Discover the emerging shapes defining luxury this season...</p>
+</div>
+</div>
+</td>
+<td class="py-3 px-6 text-on-surface-variant dark:text-surface-dim hidden md:table-cell">A. Smith</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#ecfdf5] text-[#065f46] dark:bg-[#064e3b] dark:text-[#a7f3d0] border border-[#a7f3d0] dark:border-[#065f46]">Published</span>
+</td>
+<td class="py-3 px-6 text-on-surface-variant dark:text-surface-dim hidden lg:table-cell">Oct 24, 2023</td>
+<td class="py-3 px-6 text-right">
+<button class="p-1.5 text-secondary hover:text-primary dark:text-outline hover:dark:text-on-primary transition-colors rounded hover:bg-surface-container dark:hover:bg-surface-container" onclick="event.stopPropagation()">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant/30 transition-colors group cursor-pointer" onclick="toggleEditor()">
+<td class="py-3 px-6 w-12" onclick="event.stopPropagation()">
+<input class="rounded border-outline-variant dark:border-outline bg-transparent text-primary dark:text-surface-bright focus:ring-primary dark:focus:ring-on-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-3 px-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-surface-container-high dark:bg-surface-container overflow-hidden border border-outline-variant dark:border-outline shrink-0 flex items-center justify-center text-outline">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">image</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface dark:text-surface-bright group-hover:text-primary dark:group-hover:text-on-primary transition-colors">Caring for Platinum Settings</p>
+<p class="font-body-sm text-body-sm text-secondary dark:text-outline truncate max-w-[200px] xl:max-w-[300px]">A comprehensive guide to maintaining the luster...</p>
+</div>
+</div>
+</td>
+<td class="py-3 px-6 text-on-surface-variant dark:text-surface-dim hidden md:table-cell">J. Doe</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container-highest dark:bg-surface-container text-on-surface-variant dark:text-surface-dim border border-outline-variant dark:border-outline">Draft</span>
+</td>
+<td class="py-3 px-6 text-on-surface-variant dark:text-surface-dim hidden lg:table-cell">Oct 20, 2023</td>
+<td class="py-3 px-6 text-right">
+<button class="p-1.5 text-secondary hover:text-primary dark:text-outline hover:dark:text-on-primary transition-colors rounded hover:bg-surface-container dark:hover:bg-surface-container" onclick="event.stopPropagation()">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low dark:hover:bg-surface-variant/30 transition-colors group cursor-pointer" onclick="toggleEditor()">
+<td class="py-3 px-6 w-12" onclick="event.stopPropagation()">
+<input class="rounded border-outline-variant dark:border-outline bg-transparent text-primary dark:text-surface-bright focus:ring-primary dark:focus:ring-on-primary w-4 h-4 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-3 px-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-surface-container-high dark:bg-surface-container overflow-hidden border border-outline-variant dark:border-outline shrink-0">
+<img alt="Thumb" class="w-full h-full object-cover" data-alt="A delicate gold necklace draped over a textured slate surface. Minimalist composition. Lighting is soft, highlighting the gold against a deep grey, almost black zinc-toned background. High end corporate visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd2mhdtkeMJoHmkmEqtQP_vUgRcnTK3_k5vxC-K_LZArCGPIqYfI92NGnLZNpuwVcUb49PW8Rw4tZIhihOISqATn9oSjVx3Z4wx68U_nRR3gFAAsHB9OSZuN8dLbAGo4emLFlJYqbvQXfnUZKs_gw6v2z7iNV3UbbXXoIkLbfW-kx-WyNuEdKPV6NWT0LYYo7Zh2DSl5P_8OJjgjceUyLxgAibzuvDXfSIOAW3xoa9iGY3J0t_uuUcyYV7vYxyZk-0t_0ofWwYg44"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface dark:text-surface-bright group-hover:text-primary dark:group-hover:text-on-primary transition-colors">The Resurgence of Yellow Gold</p>
+<p class="font-body-sm text-body-sm text-secondary dark:text-outline truncate max-w-[200px] xl:max-w-[300px]">Why traditional hues are dominating modern collections...</p>
+</div>
+</div>
+</td>
+<td class="py-3 px-6 text-on-surface-variant dark:text-surface-dim hidden md:table-cell">A. Smith</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#ecfdf5] text-[#065f46] dark:bg-[#064e3b] dark:text-[#a7f3d0] border border-[#a7f3d0] dark:border-[#065f46]">Published</span>
+</td>
+<td class="py-3 px-6 text-on-surface-variant dark:text-surface-dim hidden lg:table-cell">Oct 15, 2023</td>
+<td class="py-3 px-6 text-right">
+<button class="p-1.5 text-secondary hover:text-primary dark:text-outline hover:dark:text-on-primary transition-colors rounded hover:bg-surface-container dark:hover:bg-surface-container" onclick="event.stopPropagation()">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Right Panel: Editor View (Hidden by default, slides in/expands) -->
+<!-- We use CSS classes to manage the grid transition state. Initially hidden via hidden class -->
+<div class="hidden xl:col-span-12 h-full flex flex-col md:flex-row gap-element-gap opacity-0 translate-x-4 transition-all duration-300" id="blog-editor-panel">
+<!-- Main Content Editor (Left Col) -->
+<div class="flex-1 bg-surface-container-lowest dark:bg-surface-container border border-outline-variant dark:border-outline rounded-xl flex flex-col overflow-hidden">
+<!-- Editor Toolbar -->
+<div class="px-4 py-3 border-b border-outline-variant dark:border-outline bg-surface dark:bg-on-background/50 flex flex-wrap items-center gap-1">
+<button class="p-1.5 rounded hover:bg-surface-container-low dark:hover:bg-surface-variant text-on-surface-variant dark:text-surface-dim transition-colors" onclick="toggleEditor()" title="Back">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<div class="w-[1px] h-4 bg-outline-variant dark:bg-outline mx-2"></div>
+<!-- Formatting Tools -->
+<button class="p-1.5 rounded hover:bg-surface-container-low dark:hover:bg-surface-variant text-on-surface-variant dark:text-surface-dim transition-colors bg-surface-container dark:bg-surface-variant">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">format_h1</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-low dark:hover:bg-surface-variant text-on-surface-variant dark:text-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">format_h2</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-low dark:hover:bg-surface-variant text-on-surface-variant dark:text-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">format_bold</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-low dark:hover:bg-surface-variant text-on-surface-variant dark:text-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">format_italic</span>
+</button>
+<div class="w-[1px] h-4 bg-outline-variant dark:bg-outline mx-1"></div>
+<button class="p-1.5 rounded hover:bg-surface-container-low dark:hover:bg-surface-variant text-on-surface-variant dark:text-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">format_list_bulleted</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-low dark:hover:bg-surface-variant text-on-surface-variant dark:text-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">format_list_numbered</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-low dark:hover:bg-surface-variant text-on-surface-variant dark:text-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">format_quote</span>
+</button>
+<div class="w-[1px] h-4 bg-outline-variant dark:bg-outline mx-1"></div>
+<button class="p-1.5 rounded hover:bg-surface-container-low dark:hover:bg-surface-variant text-on-surface-variant dark:text-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">link</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-low dark:hover:bg-surface-variant text-on-surface-variant dark:text-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">image</span>
+</button>
+<div class="ml-auto flex items-center text-xs text-secondary dark:text-outline font-mono">
+                                    Words: 432
+                                </div>
+</div>
+<!-- Editor Canvas -->
+<div class="flex-1 overflow-y-auto p-6 md:p-8 bg-surface-container-lowest dark:bg-surface-container">
+<input class="w-full bg-transparent border-none p-0 font-h1 text-h1 text-on-surface dark:text-surface-bright focus:ring-0 placeholder:text-outline-variant dark:placeholder:text-outline mb-6" placeholder="Post Title" type="text" value="The 2024 Diamond Cut Trends"/>
+<div class="w-full bg-transparent border-none p-0 font-body-base text-body-base text-on-surface-variant dark:text-surface-dim focus:outline-none min-h-[300px] editor-content" contenteditable="true" placeholder="Start writing your article here...">
+<p class="mb-4">The evolution of luxury jewellery is subtle, often moving in cycles rather than dramatic shifts. As we move through 2024, the demand for unique, personalized cuts is overshadowing traditional brilliant rounds.</p>
+<h2 class="font-h3 text-h3 text-on-surface dark:text-surface-bright mt-8 mb-4">The Rise of the Oval</h2>
+<p class="mb-4">Elongated shapes, particularly oval and radiant cuts, provide a larger surface area relative to carat weight. This creates an illusion of greater size while offering a flattering profile on the hand.</p>
+<ul class="list-disc pl-5 mb-4 space-y-2">
+<li>Increased perceived size per carat.</li>
+<li>Flattering elongation of the finger.</li>
+<li>Versatility in both vintage and modern settings.</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Settings Sidebar (Right Col) -->
+<div class="w-full md:w-80 shrink-0 bg-surface-container-lowest dark:bg-surface-container border border-outline-variant dark:border-outline rounded-xl flex flex-col overflow-y-auto">
+<!-- Publish Action -->
+<div class="p-6 border-b border-outline-variant dark:border-outline bg-surface dark:bg-on-background/50">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-md text-label-md text-on-surface dark:text-surface-bright">Status</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#ecfdf5] text-[#065f46] dark:bg-[#064e3b] dark:text-[#a7f3d0] border border-[#a7f3d0] dark:border-[#065f46]">Published</span>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-2 border border-outline-variant dark:border-outline rounded-md font-label-md text-label-md text-on-surface dark:text-surface-bright hover:bg-surface-container-low dark:hover:bg-surface-container transition-colors">Save Draft</button>
+<button class="flex-1 py-2 bg-primary dark:bg-on-primary text-on-primary dark:text-primary rounded-md font-label-md text-label-md hover:opacity-90 transition-opacity">Update</button>
+</div>
+</div>
+<!-- Meta Accordions (Simulated) -->
+<div class="p-6 border-b border-outline-variant dark:border-outline space-y-4">
+<h4 class="font-label-sm text-label-sm text-secondary dark:text-outline uppercase tracking-wider">Cover Image</h4>
+<div class="w-full aspect-video rounded-lg bg-surface-container-high dark:bg-on-background border border-dashed border-outline-variant dark:border-outline flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer hover:bg-surface-container dark:hover:bg-surface-variant/50 transition-colors">
+<img alt="Cover" class="w-full h-full object-cover absolute inset-0 opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Close up of a diamond ring reflecting bright white light. Macro photography. Monochrome dark background with striking high contrast highlights on the jewel. Crisp, detailed, premium aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBk03I2m5SCP-br-qpCLhMjSYM2qCdu3Vy_yzHuTeFrdQPRAmW2jh2hChSh9Rdr8axEEAGJsY_3weOL0pGz3ZXrKCE2DMpDXXU-YoNJxvRD53E1dbawe4WX4mh2Ljk1-V4BcJVYhqgqKnaY0k1rqoOgUcHhiWAuD5eCphHvvvakvfIqXUgpQpKGvfqeOm6SpO243DfuZpsbjBpR5lWOaKmsOukoQLZLoTZvrb2IZvAEJnkNhRLGEOm1V3OlfDsMtzVWePd5gjQntNg"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">edit</span>
+</div>
+</div>
+</div>
+<div class="p-6 border-b border-outline-variant dark:border-outline space-y-4">
+<h4 class="font-label-sm text-label-sm text-secondary dark:text-outline uppercase tracking-wider">Organization</h4>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant dark:text-surface-dim mb-1">Category</label>
+<select class="w-full h-9 px-3 bg-surface-container-lowest dark:bg-surface-container-low border border-outline-variant dark:border-outline rounded-md font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary-fixed">
+<option>Trends &amp; Insights</option>
+<option>Care Guides</option>
+<option>Collections</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant dark:text-surface-dim mb-1">Tags</label>
+<div class="flex flex-wrap gap-2 mb-2">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container-highest dark:bg-surface-variant text-on-surface dark:text-surface-bright font-mono text-[11px]">
+                                            Diamonds <button class="hover:text-error"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</span>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container-highest dark:bg-surface-variant text-on-surface dark:text-surface-bright font-mono text-[11px]">
+                                            2024 <button class="hover:text-error"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</span>
+</div>
+<input class="w-full h-9 px-3 bg-surface-container-lowest dark:bg-surface-container-low border border-outline-variant dark:border-outline rounded-md font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary-fixed placeholder:text-outline-variant dark:placeholder:text-outline" placeholder="Add tag..." type="text"/>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<h4 class="font-label-sm text-label-sm text-secondary dark:text-outline uppercase tracking-wider">Excerpt</h4>
+<textarea class="w-full p-3 bg-surface-container-lowest dark:bg-surface-container-low border border-outline-variant dark:border-outline rounded-md font-body-sm text-body-sm text-on-surface dark:text-surface-bright focus:outline-none focus:ring-2 focus:ring-primary-fixed resize-none placeholder:text-outline-variant dark:placeholder:text-outline" rows="3">Discover the emerging shapes defining luxury this season...</textarea>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Simple JS to toggle between List and Editor views for demonstration -->
+<script>
+        function toggleEditor() {
+            const listPanel = document.getElementById('blog-list-panel');
+            const editorPanel = document.getElementById('blog-editor-panel');
+            
+            if (editorPanel.classList.contains('hidden')) {
+                // Hide List, Show Editor
+                listPanel.classList.add('hidden');
+                editorPanel.classList.remove('hidden');
+                
+                // Small delay for transition effect
+                setTimeout(() => {
+                    editorPanel.classList.remove('opacity-0', 'translate-x-4');
+                    editorPanel.classList.add('opacity-100', 'translate-x-0');
+                }, 10);
+            } else {
+                // Hide Editor, Show List
+                editorPanel.classList.remove('opacity-100', 'translate-x-0');
+                editorPanel.classList.add('opacity-0', 'translate-x-4');
+                
+                setTimeout(() => {
+                    editorPanel.classList.add('hidden');
+                    listPanel.classList.remove('hidden');
+                }, 300); // match duration
+            }
+        }
+
+        // Attach to new post button as well
+        document.getElementById('toggle-editor-btn').addEventListener('click', toggleEditor);
+    </script>
+</body></html>
