@@ -8,6 +8,7 @@ import { formatNumber } from "@/lib/format"
 import {
   deleteCategory,
   listCategories,
+  listCategoryHierarchy,
 } from "@/services/categories"
 import type { Category } from "@/types/category"
 import { Button } from "@/components/ui/button"
@@ -40,7 +41,9 @@ export default function CategoriesPage() {
   const [editing, setEditing] = useState<Category | null>(null)
   const [deleting, setDeleting] = useState<Category | null>(null)
   const [deletingBusy, setDeletingBusy] = useState(false)
-  const { data, loading, error, refetch } = useAsync(listCategories, [])
+  const { data, loading, error, refetch } = useAsync(listCategoryHierarchy, [])
+  // Flat list used by the form dialog's parent-category dropdown
+  const { data: flatCategories } = useAsync(listCategories, [])
 
   function openCreate() {
     setEditing(null)
@@ -103,7 +106,8 @@ export default function CategoriesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.map((category) => (
+                {data.flatMap((category) => [
+                  // Top-level category row
                   <TableRow key={category.id}>
                     <TableCell>
                       <RemoteImage
@@ -112,8 +116,13 @@ export default function CategoriesPage() {
                         className="size-10"
                       />
                     </TableCell>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-semibold">
                       {category.name}
+                      {(category.children ?? []).length > 0 && (
+                        <span className="ml-2 text-xs font-normal text-muted-foreground">
+                          {category.children.length} subcategories
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {category.slug}
@@ -144,8 +153,52 @@ export default function CategoriesPage() {
                         </Button>
                       </div>
                     </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>,
+                  // Subcategory rows (indented)
+                  ...(category.children ?? []).map((sub) => (
+                    <TableRow key={sub.id} className="bg-muted/30">
+                      <TableCell>
+                        <RemoteImage
+                          value={sub.image}
+                          alt={sub.name}
+                          className="size-8 ml-4"
+                        />
+                      </TableCell>
+                      <TableCell className="text-sm pl-8 text-muted-foreground">
+                        ↳ {sub.name}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {sub.slug}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums text-sm">
+                        {formatNumber(sub.sort_order)}
+                      </TableCell>
+                      <TableCell>
+                        <ActivePill active={sub.is_active} />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => openEdit(sub)}
+                            aria-label="Edit"
+                          >
+                            <PencilIcon />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeleting(sub)}
+                            aria-label="Delete"
+                          >
+                            <Trash2Icon className="text-destructive" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )),
+                ])}
               </TableBody>
             </Table>
           )}
@@ -156,7 +209,7 @@ export default function CategoriesPage() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         category={editing}
-        categories={data ?? []}
+        categories={flatCategories ?? []}
         onSaved={refetch}
       />
 
