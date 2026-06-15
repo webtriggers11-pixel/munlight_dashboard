@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Loader2,
   PencilIcon,
   PlusIcon,
   RefreshCwIcon,
+  SaveIcon,
   Trash2Icon,
   ZapIcon,
 } from "lucide-react"
@@ -22,6 +23,11 @@ import {
   syncPickupLocation,
   testShippingConfig,
 } from "@/services/shipping-config"
+import {
+  getStoreSettings,
+  updateStoreSettings,
+  type StoreSettings,
+} from "@/services/store-settings"
 import { registerShiprocketWebhook } from "@/services/webhooks"
 import type { GatewayConfig } from "@/types/gateway"
 import type { ShippingConfig } from "@/types/shipping-config"
@@ -29,6 +35,7 @@ import { GatewayFormDialog } from "@/components/gateway-form-dialog"
 import { ShippingConfigFormDialog } from "@/components/shipping-config-form-dialog"
 import { PageHeader } from "@/components/page-header"
 import { ActivePill } from "@/components/status-badge"
+import { Switch } from "@/components/ui/switch"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -72,12 +79,16 @@ export default function SettingsPage() {
         title="Settings"
         description="Payment gateways, shipping providers, and webhook registration."
       />
-      <Tabs defaultValue="gateways">
+      <Tabs defaultValue="store">
         <TabsList>
+          <TabsTrigger value="store">Store settings</TabsTrigger>
           <TabsTrigger value="gateways">Payment gateways</TabsTrigger>
           <TabsTrigger value="shipping">Shipping config</TabsTrigger>
           <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
         </TabsList>
+        <TabsContent value="store" className="mt-4">
+          <StoreSettingsTab />
+        </TabsContent>
         <TabsContent value="gateways" className="mt-4">
           <GatewaysTab />
         </TabsContent>
@@ -88,6 +99,211 @@ export default function SettingsPage() {
           <WebhooksTab />
         </TabsContent>
       </Tabs>
+    </div>
+  )
+}
+
+function StoreSettingsTab() {
+  const [saving, setSaving] = useState(false)
+  const [form, setForm] = useState<StoreSettings | null>(null)
+
+  useEffect(() => {
+    getStoreSettings().then(setForm).catch(() => toast.error("Failed to load store settings"))
+  }, [])
+
+  function set<K extends keyof StoreSettings>(key: K, value: StoreSettings[K]) {
+    setForm((prev) => prev ? { ...prev, [key]: value } : prev)
+  }
+
+  async function handleSaveOrder() {
+    if (!form) return
+    setSaving(true)
+    try {
+      const updated = await updateStoreSettings({
+        cod_enabled             : form.cod_enabled,
+        cod_charge              : form.cod_charge,
+        free_shipping_threshold : form.free_shipping_threshold,
+        min_order_amount        : form.min_order_amount,
+      })
+      setForm((prev) => prev ? { ...prev, ...updated } : updated)
+      toast.success("Order settings saved")
+    } catch (err) {
+      toast.error(apiErrorMessage(err))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (!form) {
+    return (
+      <div className="flex h-48 items-center justify-center text-muted-foreground">
+        <Loader2 className="size-5 animate-spin" />
+      </div>
+    )
+  }
+
+  const hasPickup = form.pickup_pincode || form.pickup_city
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* ── Order & Payment settings ── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Order &amp; Payment settings</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-6 max-w-xl">
+          {/* COD */}
+          <div className="flex items-center justify-between gap-4 rounded-lg border p-4">
+            <div>
+              <p className="text-sm font-medium">Cash on Delivery (COD)</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Customers can pay on delivery. Enable only if your logistics supports it.
+              </p>
+            </div>
+            <Switch
+              checked={form.cod_enabled}
+              onCheckedChange={(v) => set("cod_enabled", v)}
+            />
+          </div>
+
+          {form.cod_enabled && (
+            <div className="grid gap-2">
+              <Label htmlFor="cod_charge">COD handling charge (₹)</Label>
+              <Input
+                id="cod_charge"
+                type="number"
+                min={0}
+                step={1}
+                value={form.cod_charge}
+                onChange={(e) => set("cod_charge", Number(e.target.value))}
+                className="w-40"
+              />
+              <p className="text-xs text-muted-foreground">Added to order total for COD orders. Set 0 for no charge.</p>
+            </div>
+          )}
+
+          {/* Free shipping */}
+          <div className="grid gap-3">
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="free_shipping_toggle"
+                checked={form.free_shipping_threshold !== null}
+                onChange={(e) => set("free_shipping_threshold", e.target.checked ? 999 : null)}
+                className="h-4 w-4 accent-primary"
+              />
+              <Label htmlFor="free_shipping_toggle">Enable free shipping above threshold</Label>
+            </div>
+            {form.free_shipping_threshold !== null && (
+              <div className="grid gap-2 pl-7">
+                <Label htmlFor="threshold">Free shipping above (₹)</Label>
+                <Input
+                  id="threshold"
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={form.free_shipping_threshold}
+                  onChange={(e) => set("free_shipping_threshold", Number(e.target.value))}
+                  className="w-40"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Orders with subtotal ≥ this amount get free shipping. Shiprocket rate is still fetched but customer is charged ₹0.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Min order amount */}
+          <div className="grid gap-2">
+            <Label htmlFor="min_order">Minimum order amount (₹)</Label>
+            <Input
+              id="min_order"
+              type="number"
+              min={0}
+              step={1}
+              value={form.min_order_amount}
+              onChange={(e) => set("min_order_amount", Number(e.target.value))}
+              className="w-40"
+            />
+            <p className="text-xs text-muted-foreground">Set to 0 to allow any order size.</p>
+          </div>
+
+          <div className="flex justify-end">
+            <Button onClick={handleSaveOrder} disabled={saving} className="w-fit">
+              {saving && <Loader2 className="size-4 animate-spin" />}
+              <SaveIcon className="size-4" />
+              Save order settings
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── Pickup address (read-only — synced from Shiprocket) ── */}
+      <Card>
+        <CardHeader className="flex flex-row items-start justify-between space-y-0">
+          <div>
+            <CardTitle className="text-base">Pickup / warehouse address</CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              Synced from Shiprocket. To update, go to{" "}
+              <span className="font-medium">Shipping config → Sync pickup</span>.
+            </p>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {hasPickup ? (
+            <div className="grid gap-1 text-sm max-w-md">
+              {form.shiprocket_pickup_location && (
+                <div className="flex gap-2">
+                  <span className="text-muted-foreground w-32 shrink-0">Location name</span>
+                  <span className="font-medium">{form.shiprocket_pickup_location}</span>
+                </div>
+              )}
+              {form.pickup_name && (
+                <div className="flex gap-2">
+                  <span className="text-muted-foreground w-32 shrink-0">Contact</span>
+                  <span>{form.pickup_name}</span>
+                </div>
+              )}
+              {form.pickup_phone && (
+                <div className="flex gap-2">
+                  <span className="text-muted-foreground w-32 shrink-0">Phone</span>
+                  <span>{form.pickup_phone}</span>
+                </div>
+              )}
+              {form.pickup_address && (
+                <div className="flex gap-2">
+                  <span className="text-muted-foreground w-32 shrink-0">Address</span>
+                  <span>{form.pickup_address}</span>
+                </div>
+              )}
+              {(form.pickup_city || form.pickup_state) && (
+                <div className="flex gap-2">
+                  <span className="text-muted-foreground w-32 shrink-0">City / State</span>
+                  <span>{[form.pickup_city, form.pickup_state].filter(Boolean).join(", ")}</span>
+                </div>
+              )}
+              {form.pickup_pincode && (
+                <div className="flex gap-2">
+                  <span className="text-muted-foreground w-32 shrink-0">Pincode</span>
+                  <span>{form.pickup_pincode}</span>
+                </div>
+              )}
+              {form.pickup_country && (
+                <div className="flex gap-2">
+                  <span className="text-muted-foreground w-32 shrink-0">Country</span>
+                  <span>{form.pickup_country}</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No pickup address synced yet. Go to{" "}
+              <span className="font-medium">Shipping config</span> and click the{" "}
+              <RefreshCwIcon className="inline size-3" /> sync icon next to your Shiprocket config.
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

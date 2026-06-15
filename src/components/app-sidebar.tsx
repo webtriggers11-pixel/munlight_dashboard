@@ -7,7 +7,9 @@ import {
   FolderTreeIcon,
   UsersIcon,
   GemIcon,
-  SettingsIcon,
+  StoreIcon,
+  CreditCardIcon,
+  TruckIcon,
 } from "lucide-react"
 
 import { config } from "@/constants/config"
@@ -23,12 +25,14 @@ import {
 } from "@/components/ui/sidebar"
 
 const navItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboardIcon },
-  { title: "Products", url: "/products", icon: PackageIcon },
-  { title: "Categories", url: "/categories", icon: FolderTreeIcon },
-  { title: "Orders", url: "/orders", icon: ShoppingCartIcon },
-  { title: "Customers", url: "/users", icon: UsersIcon },
-  { title: "Settings", url: "/settings", icon: SettingsIcon },
+  { title: "Dashboard",      url: "/",               icon: LayoutDashboardIcon },
+  { title: "Products",       url: "/products",        icon: PackageIcon },
+  { title: "Categories",     url: "/categories",      icon: FolderTreeIcon },
+  { title: "Orders",         url: "/orders",          icon: ShoppingCartIcon },
+  { title: "Customers",      url: "/users",           icon: UsersIcon },
+  { title: "Store Settings", url: "/store-settings",  icon: StoreIcon },
+  { title: "Payments",       url: "/payments",        icon: CreditCardIcon },
+  { title: "Shipping",       url: "/shipping",        icon: TruckIcon },
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
