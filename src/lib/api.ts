@@ -1,8 +1,10 @@
 import axios, { type AxiosInstance } from "axios"
 
-// Single API base URL, read from env (must include the /api prefix).
-export const API_BASE_URL =
-  import.meta.env.VITE_API_URL ?? "http://localhost:8000/api"
+// API base — must be the API root (without /api prefix; added per-request)
+const API_ROOT =
+  (import.meta.env.VITE_API_URL ?? "http://localhost:8000/api").replace(/\/api$/, "")
+
+export const API_BASE_URL = `${API_ROOT}/api`
 
 const TOKEN_KEY = "munlight_admin_token"
 
@@ -19,11 +21,12 @@ export function clearToken(): void {
 }
 
 export const api: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
+  baseURL        : API_BASE_URL,
+  headers        : { "Content-Type": "application/json" },
+  withCredentials: true,   // send the httpOnly refresh-token cookie cross-origin
 })
 
-// Attach the admin JWT to every request.
+// Attach the short-lived admin access token to every request
 api.interceptors.request.use((config) => {
   const token = getToken()
   if (token) {
@@ -32,18 +35,56 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// On 401 the token is stale/invalid — clear it and bounce to login.
-// We avoid importing the router here; a hard redirect is simplest and safe.
+// Silent refresh: on 401 try /auth/refresh once using the httpOnly cookie.
+// If successful, retry the original request with the new access token.
+// If it fails, clear local state and redirect to login.
+let _refreshing: Promise<string | null> | null = null
+
+async function _doRefresh(): Promise<string | null> {
+  try {
+    const resp = await axios.post(
+      `${API_ROOT}/api/auth/refresh`,
+      null,
+      { withCredentials: true }
+    )
+    const token: string = resp.data?.data?.access_token
+    if (token) {
+      setToken(token)
+      const user = resp.data?.data?.user
+      if (user) localStorage.setItem("munlight_admin_user", JSON.stringify(user))
+    }
+    return token ?? null
+  } catch {
+    return null
+  }
+}
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
+  async (error) => {
+    const isAuthEndpoint = error.config?.url?.includes("/auth/")
+    const isRefreshRetry = error.config?._refreshRetry
+
+    if (error.response?.status === 401 && !isAuthEndpoint && !isRefreshRetry) {
+      if (!_refreshing) {
+        _refreshing = _doRefresh().finally(() => { _refreshing = null })
+      }
+      const newToken = await _refreshing
+
+      if (newToken) {
+        error.config._refreshRetry = true
+        error.config.headers.Authorization = `Bearer ${newToken}`
+        return api(error.config)
+      }
+
+      // Refresh failed — wipe local state and go to login
       clearToken()
       localStorage.removeItem("munlight_admin_user")
       if (window.location.pathname !== "/login") {
         window.location.assign("/login")
       }
     }
+
     return Promise.reject(error)
   }
 )
