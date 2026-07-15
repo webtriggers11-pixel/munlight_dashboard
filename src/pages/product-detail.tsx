@@ -212,6 +212,8 @@ export default function ProductDetailPage() {
                 value={product.weight != null ? `${product.weight} kg` : "—"}
               />
               <Field label="HSN code" value={product.hsn_code ?? "—"} />
+              <Field label="Material" value={product.material ?? "—"} />
+              <Field label="Color" value={product.color ?? "—"} />
               <Field
                 label="Rating"
                 value={`${product.avg_rating.toFixed(1)} (${product.review_count})`}
