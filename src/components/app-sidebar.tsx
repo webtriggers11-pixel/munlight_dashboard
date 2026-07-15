@@ -16,6 +16,7 @@ import { config } from "@/constants/config"
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -83,6 +84,29 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="group-data-[collapsible=icon]:hidden">
+        <p className="px-2 py-1 text-[10px] leading-relaxed text-sidebar-foreground/50">
+          Developed by{' '}
+          <a
+            href="https://www.webtriggers.online/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-dotted underline-offset-2 hover:text-sidebar-foreground/80"
+          >
+            WebTriggers
+          </a>
+          <br />
+          Managed by{' '}
+          <a
+            href="https://www.maittreyadigital.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-dotted underline-offset-2 hover:text-sidebar-foreground/80"
+          >
+            Maittreya Digital
+          </a>
+        </p>
+      </SidebarFooter>
     </Sidebar>
   )
 }
