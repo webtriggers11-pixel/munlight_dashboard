@@ -4,7 +4,7 @@ import { toast } from "sonner"
 
 import { useAsync } from "@/hooks/use-async"
 import { apiErrorMessage } from "@/lib/api"
-import { formatNumber } from "@/lib/format"
+import { formatDate, formatNumber } from "@/lib/format"
 import {
   deleteCategory,
   listCategories,
@@ -35,6 +35,21 @@ import {
 import { RemoteImage } from "@/components/remote-image"
 import { PageHeader } from "@/components/page-header"
 import { CategoryFormDialog } from "@/components/category-form-dialog"
+
+function AuditCell({
+  at,
+  by,
+}: {
+  at: string | null
+  by: { full_name: string } | null
+}) {
+  return (
+    <div className="text-xs leading-tight">
+      <div>{formatDate(at)}</div>
+      <div className="text-muted-foreground">{by ? by.full_name : "—"}</div>
+    </div>
+  )
+}
 
 export default function CategoriesPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -102,6 +117,8 @@ export default function CategoriesPage() {
                   <TableHead>Slug</TableHead>
                   <TableHead className="text-right">Sort</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Updated</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -132,6 +149,12 @@ export default function CategoriesPage() {
                     </TableCell>
                     <TableCell>
                       <ActivePill active={category.is_active} />
+                    </TableCell>
+                    <TableCell>
+                      <AuditCell at={category.created_at} by={category.created_by} />
+                    </TableCell>
+                    <TableCell>
+                      <AuditCell at={category.updated_at} by={category.updated_by} />
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
@@ -175,6 +198,12 @@ export default function CategoriesPage() {
                       </TableCell>
                       <TableCell>
                         <ActivePill active={sub.is_active} />
+                      </TableCell>
+                      <TableCell>
+                        <AuditCell at={sub.created_at} by={sub.created_by} />
+                      </TableCell>
+                      <TableCell>
+                        <AuditCell at={sub.updated_at} by={sub.updated_by} />
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
