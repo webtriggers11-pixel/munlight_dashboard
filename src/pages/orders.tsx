@@ -3,6 +3,7 @@ import { EyeIcon, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 import { useAsync } from "@/hooks/use-async"
+import { useDebounce } from "@/hooks/use-debounce"
 import { apiErrorMessage } from "@/lib/api"
 import { formatCurrency, formatDate, titleCase } from "@/lib/format"
 import { listOrders, updateOrderStatus } from "@/services/orders"
@@ -14,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { PaginationBar } from "@/components/pagination-bar"
 import { PageHeader } from "@/components/page-header"
 import { OrderDetailDialog } from "@/components/order-detail-dialog"
+import { SearchInput } from "@/components/search-input"
 import {
   Select,
   SelectContent,
@@ -76,12 +78,25 @@ const ALL = "all"
 export default function OrdersPage() {
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState<string>(ALL)
+  const [search, setSearch] = useState("")
+  const debouncedSearch = useDebounce(search, 300)
   const [busyId, setBusyId] = useState<number | null>(null)
   const [detailId, setDetailId] = useState<number | null>(null)
   const { data, loading, error, refetch } = useAsync(
-    () => listOrders(page, 20, filter === ALL ? undefined : (filter as OrderStatus)),
-    [page, filter]
+    () =>
+      listOrders(
+        page,
+        20,
+        filter === ALL ? undefined : (filter as OrderStatus),
+        debouncedSearch
+      ),
+    [page, filter, debouncedSearch]
   )
+
+  function handleSearchChange(value: string) {
+    setSearch(value)
+    setPage(1)
+  }
 
   async function handleStatusChange(orderId: number, status: OrderStatus) {
     setBusyId(orderId)
@@ -126,6 +141,15 @@ export default function OrdersPage() {
 
       <Card>
         <CardContent className="pt-6">
+          <div className="mb-4">
+            <SearchInput
+              value={search}
+              onChange={handleSearchChange}
+              placeholder="Search by order number, customer name, phone, or email…"
+              className="max-w-md"
+            />
+          </div>
+
           {loading ? (
             <div className="flex h-48 items-center justify-center text-muted-foreground">
               <Loader2 className="size-5 animate-spin" />
@@ -133,7 +157,11 @@ export default function OrdersPage() {
           ) : error ? (
             <p className="text-sm text-destructive">{error}</p>
           ) : !data || data.items.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No orders found.</p>
+            <p className="text-sm text-muted-foreground">
+              {debouncedSearch
+                ? `No orders match “${debouncedSearch}”.`
+                : "No orders found."}
+            </p>
           ) : (
             <>
               <Table>

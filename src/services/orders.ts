@@ -10,10 +10,16 @@ import type { Order, OrderAdmin, OrderStatusUpdate } from "@/types/order"
 export async function listOrders(
   page = 1,
   pageSize = 20,
-  status?: OrderStatus
+  status?: OrderStatus,
+  search?: string
 ): Promise<Paginated<Order>> {
   const { data } = await api.get<PaginatedEnvelope<Order>>("/orders", {
-    params: { page, page_size: pageSize, ...(status ? { status } : {}) },
+    params: {
+      page,
+      page_size: pageSize,
+      ...(status ? { status } : {}),
+      search: search?.trim() || undefined,
+    },
   })
   return {
     items: data.data,

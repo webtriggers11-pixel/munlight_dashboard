@@ -7,26 +7,55 @@ import { uploadImage } from "@/services/upload"
 import { Button } from "@/components/ui/button"
 import { RemoteImage } from "@/components/remote-image"
 
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024 // 5 MB — must match backend MAX_SIZE_BYTES in app/utils/storage.py
+
 interface ImageUploaderProps {
   value: string[]
   onChange: (keys: string[]) => void
   multiple?: boolean
+  /** Maximum number of images allowed in `value`. Extra picked files are rejected with a toast. */
+  max?: number
 }
 
 export function ImageUploader({
   value,
   onChange,
   multiple = true,
+  max,
 }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
+  const atMax = max != null && value.length >= max
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return
+
+    const remaining = max != null ? Math.max(0, max - value.length) : Infinity
+    const picked = Array.from(files)
+    const valid: File[] = []
+    for (const f of picked) {
+      if (!f.type.startsWith("image/")) {
+        toast.error(`${f.name} is not an image`)
+        continue
+      }
+      if (f.size > MAX_FILE_SIZE_BYTES) {
+        toast.error(`${f.name} is larger than 5 MB`)
+        continue
+      }
+      if (valid.length >= remaining) {
+        toast.error(`You can only have ${max} image${max === 1 ? "" : "s"} per product`)
+        break
+      }
+      valid.push(f)
+    }
+    if (valid.length === 0) {
+      if (inputRef.current) inputRef.current.value = ""
+      return
+    }
+
     setUploading(true)
     try {
-      const picked = Array.from(files)
-      const results = await Promise.all(picked.map((f) => uploadImage(f)))
+      const results = await Promise.all(valid.map((f) => uploadImage(f)))
       const keys = results.map((r) => r.key)
       onChange(multiple ? [...value, ...keys] : keys.slice(0, 1))
       toast.success(`${keys.length} image${keys.length > 1 ? "s" : ""} uploaded`)
@@ -58,7 +87,7 @@ export function ImageUploader({
         </div>
       ))}
 
-      {(multiple || value.length === 0) && (
+      {(multiple || value.length === 0) && !atMax && (
         <Button
           type="button"
           variant="outline"

@@ -5,10 +5,16 @@ import type { Product, ProductCreate, ProductUpdate } from "@/types/product"
 export async function listProducts(
   page = 1,
   pageSize = 20,
-  includeInactive = true
+  includeInactive = true,
+  search?: string
 ): Promise<Paginated<Product>> {
   const { data } = await api.get<PaginatedEnvelope<Product>>("/products", {
-    params: { page, page_size: pageSize, include_inactive: includeInactive },
+    params: {
+      page,
+      page_size: pageSize,
+      include_inactive: includeInactive,
+      search: search?.trim() || undefined,
+    },
   })
   return {
     items: data.data,

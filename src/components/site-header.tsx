@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom"
-import { BellIcon, SearchIcon } from "lucide-react"
+import { BellIcon } from "lucide-react"
 
 import { useAuth } from "@/lib/auth"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { ModeToggle } from "@/components/mode-toggle"
+import { GlobalSearch } from "@/components/global-search"
 
 function initials(name: string): string {
   return (
@@ -33,14 +33,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 flex h-(--header-height) shrink-0 items-center gap-2 border-b bg-card px-4 lg:px-6">
       <SidebarTrigger className="-ml-1" />
-      <div className="relative w-full max-w-xs">
-        <SearchIcon className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="h-9 bg-muted pl-8"
-        />
-      </div>
+      <GlobalSearch />
 
       <div className="ml-auto flex items-center gap-1">
         <ModeToggle />

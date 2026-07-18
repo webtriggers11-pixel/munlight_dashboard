@@ -121,8 +121,8 @@ export function CategoryFormDialog({
       const payload: CategoryCreate = {
         name,
         slug:        slug.trim() || undefined,
-        description: description || undefined,
-        image:       image[0] || undefined,
+        description: description || "",
+        image:       image[0] ?? "",
         parent_id:   categoryType === "sub" && parentId !== NO_PARENT ? Number(parentId) : undefined,
         sort_order:  Number(sortOrder),
         is_active:   isActive,

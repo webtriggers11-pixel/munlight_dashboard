@@ -4,6 +4,7 @@ import { EyeIcon, Loader2, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react
 import { toast } from "sonner"
 
 import { useAsync } from "@/hooks/use-async"
+import { useDebounce } from "@/hooks/use-debounce"
 import { apiErrorMessage } from "@/lib/api"
 import { formatCurrency, formatNumber } from "@/lib/format"
 import { deleteProduct, listProducts } from "@/services/products"
@@ -34,19 +35,28 @@ import { PaginationBar } from "@/components/pagination-bar"
 import { PageHeader } from "@/components/page-header"
 import { RemoteImage } from "@/components/remote-image"
 import { ProductFormDialog } from "@/components/product-form-dialog"
+import { SearchInput } from "@/components/search-input"
+import { AuditCell } from "@/components/audit-cell"
 
 export default function ProductsPage() {
   const [page, setPage] = useState(1)
+  const [search, setSearch] = useState("")
+  const debouncedSearch = useDebounce(search, 300)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<Product | null>(null)
   const [deleting, setDeleting] = useState<Product | null>(null)
   const [deletingBusy, setDeletingBusy] = useState(false)
 
   const { data, loading, error, refetch } = useAsync(
-    () => listProducts(page, 20),
-    [page]
+    () => listProducts(page, 20, true, debouncedSearch),
+    [page, debouncedSearch]
   )
   const { data: categories } = useAsync(listCategories, [])
+
+  function handleSearchChange(value: string) {
+    setSearch(value)
+    setPage(1)
+  }
 
   function openCreate() {
     setEditing(null)
@@ -88,6 +98,14 @@ export default function ProductsPage() {
 
       <Card>
         <CardContent className="pt-6">
+          <div className="mb-4">
+            <SearchInput
+              value={search}
+              onChange={handleSearchChange}
+              placeholder="Search by name, SKU, or slug…"
+            />
+          </div>
+
           {loading ? (
             <div className="flex h-48 items-center justify-center text-muted-foreground">
               <Loader2 className="size-5 animate-spin" />
@@ -95,7 +113,11 @@ export default function ProductsPage() {
           ) : error ? (
             <p className="text-sm text-destructive">{error}</p>
           ) : !data || data.items.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No products found.</p>
+            <p className="text-sm text-muted-foreground">
+              {debouncedSearch
+                ? `No products match “${debouncedSearch}”.`
+                : "No products found."}
+            </p>
           ) : (
             <>
               <Table>
@@ -107,6 +129,8 @@ export default function ProductsPage() {
                     <TableHead className="text-right">Price</TableHead>
                     <TableHead className="text-right">Stock</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead>Updated</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -145,6 +169,12 @@ export default function ProductsPage() {
                       </TableCell>
                       <TableCell>
                         <ActivePill active={product.is_active} />
+                      </TableCell>
+                      <TableCell>
+                        <AuditCell at={product.created_at} by={product.created_by} />
+                      </TableCell>
+                      <TableCell>
+                        <AuditCell at={product.updated_at} by={product.updated_by} />
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">

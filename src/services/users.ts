@@ -4,10 +4,11 @@ import type { User } from "@/types/user"
 
 export async function listUsers(
   page = 1,
-  pageSize = 20
+  pageSize = 20,
+  search?: string
 ): Promise<Paginated<User>> {
   const { data } = await api.get<PaginatedEnvelope<User>>("/admin/users", {
-    params: { page, page_size: pageSize },
+    params: { page, page_size: pageSize, search: search?.trim() || undefined },
   })
   return {
     items: data.data,

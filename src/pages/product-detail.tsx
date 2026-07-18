@@ -12,7 +12,7 @@ import { toast } from "sonner"
 
 import { useAsync } from "@/hooks/use-async"
 import { apiErrorMessage } from "@/lib/api"
-import { formatCurrency, formatDate, formatNumber } from "@/lib/format"
+import { formatCurrency, formatNumber } from "@/lib/format"
 import {
   deleteProduct,
   getProductBySlug,
@@ -40,6 +40,7 @@ import {
 import { ActivePill } from "@/components/status-badge"
 import { RemoteImage } from "@/components/remote-image"
 import { ProductFormDialog } from "@/components/product-form-dialog"
+import { AuditCell } from "@/components/audit-cell"
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -278,9 +279,28 @@ export default function ProductDetailPage() {
           )}
 
           <p className="text-xs text-muted-foreground">
-            Slug: <span className="font-mono">{product.slug}</span> · Created{" "}
-            {formatDate(product.created_at)}
+            Slug: <span className="font-mono">{product.slug}</span>
           </p>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Activity</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Created</p>
+                <div className="mt-0.5">
+                  <AuditCell at={product.created_at} by={product.created_by} />
+                </div>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Last updated</p>
+                <div className="mt-0.5">
+                  <AuditCell at={product.updated_at} by={product.updated_by} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
