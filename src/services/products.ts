@@ -49,3 +49,44 @@ export async function updateProduct(
 export async function deleteProduct(productId: number): Promise<void> {
   await api.delete(`/products/${productId}`)
 }
+
+export type BulkImportStatus = "created" | "updated" | "revived" | "skipped"
+
+export interface BulkImportRowResult {
+  row: number
+  sku: string | null
+  name: string
+  status: BulkImportStatus
+  error: string | null
+  warnings: string[]
+}
+
+export interface BulkImportSummary {
+  dry_run: boolean
+  total: number
+  created: number
+  updated: number
+  revived: number
+  skipped: number
+  rows: BulkImportRowResult[]
+}
+
+// Upload a CSV or Excel sheet of products. Matching is by SKU — existing SKUs
+// are updated in place, new SKUs are created. Pass dryRun=true to validate and
+// preview the outcome without writing anything to the DB.
+export async function bulkImportProducts(
+  file: File,
+  dryRun = false
+): Promise<BulkImportSummary> {
+  const form = new FormData()
+  form.append("file", file)
+  const { data } = await api.post<ApiEnvelope<BulkImportSummary>>(
+    "/products/bulk-import",
+    form,
+    {
+      params: { dry_run: dryRun },
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  )
+  return data.data
+}
