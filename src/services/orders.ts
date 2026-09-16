@@ -84,3 +84,13 @@ export async function syncShipmentTracking(
   await api.post(`/orders/${orderId}/shipment/sync`)
   return getAdminOrder(orderId)
 }
+
+// Schedules a Shiprocket pickup for a shipment that already has an AWB.
+// pickupDate must be YYYY-MM-DD. Lives on the /shipping router, not /orders.
+export async function schedulePickup(
+  orderId: number,
+  pickupDate: string
+): Promise<OrderAdmin> {
+  await api.post(`/shipping/pickup/${orderId}`, { pickup_date: pickupDate })
+  return getAdminOrder(orderId)
+}

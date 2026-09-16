@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
-import { ExternalLinkIcon, Loader2, TruckIcon } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { CalendarClockIcon, ExternalLinkIcon, Loader2, TruckIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import { useAsync } from "@/hooks/use-async"
@@ -10,6 +10,7 @@ import {
   confirmOrder,
   createShipment,
   getAdminOrder,
+  schedulePickup,
   syncShipmentTracking,
   updateOrderNotes,
 } from "@/services/orders"
@@ -64,6 +65,10 @@ function OrderDetailBody({
 }) {
   const [notes, setNotes] = useState("")
   const [actionBusy, setActionBusy] = useState<string | null>(null)
+  const pickupOptions = useMemo(() => pickupDateOptions(), [])
+  const [pickupDate, setPickupDate] = useState(
+    () => pickupOptions[0]?.value ?? todayISODate()
+  )
 
   const { data: order, loading, error, refetch } = useAsync(
     () => getAdminOrder(orderId),
@@ -91,6 +96,36 @@ function OrderDetailBody({
     }
   }
 
+  // Pickup gets its own handler (not runAction) so we can compare the date the
+  // manager picked against the date Shiprocket actually booked, and tell them
+  // clearly when the requested slot wasn't available and got shifted.
+  async function handleSchedulePickup(o: OrderAdmin) {
+    setActionBusy("pickup")
+    try {
+      const updated = await schedulePickup(o.id, pickupDate)
+      refetch()
+      onUpdated?.()
+      const booked = updated.shipment_detail?.pickup_scheduled_date
+      const bookedDay = booked ? booked.slice(0, 10) : null
+      if (bookedDay && bookedDay !== pickupDate) {
+        toast.warning(
+          `Requested ${formatPickupDate(pickupDate)} wasn't available — ` +
+            `Shiprocket scheduled pickup for ${formatPickupDate(bookedDay)}.`
+        )
+      } else {
+        toast.success(
+          bookedDay
+            ? `Pickup scheduled for ${formatPickupDate(bookedDay)}`
+            : "Pickup scheduled"
+        )
+      }
+    } catch (err) {
+      toast.error(apiErrorMessage(err))
+    } finally {
+      setActionBusy(null)
+    }
+  }
+
   const canConfirm =
     order?.status === "placed" &&
     (order.payment_status === "success" ||
@@ -104,6 +139,15 @@ function OrderDetailBody({
     order?.status === "confirmed" && !order.shipment_detail?.awb_number
 
   const hasShipment = !!order?.shipment_detail
+
+  // Pickup can be scheduled once an AWB exists and the courier hasn't picked it
+  // up yet. The backend rejects a second schedule, so hide it afterwards.
+  const canSchedulePickup =
+    !!order?.shipment_detail?.awb_number &&
+    order.shipment_detail.shipment_status === "label_created"
+
+  const pickupScheduled =
+    order?.shipment_detail?.shipment_status === "pickup_scheduled"
 
   return (
     <>
@@ -229,6 +273,76 @@ function OrderDetailBody({
                     </Button>
                   )}
                 </div>
+
+                {canSchedulePickup && (
+                  <div className="rounded-lg border p-4">
+                    <p className="text-sm font-medium">Schedule pickup</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Select a date for the courier to collect this shipment. If
+                      the date isn&apos;t available, Shiprocket books the nearest
+                      slot and we&apos;ll show the confirmed date.
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {pickupOptions.map((opt) => (
+                        <Button
+                          key={opt.value}
+                          type="button"
+                          size="sm"
+                          variant={
+                            pickupDate === opt.value ? "default" : "outline"
+                          }
+                          disabled={actionBusy !== null}
+                          onClick={() => setPickupDate(opt.value)}
+                        >
+                          {opt.label}
+                        </Button>
+                      ))}
+                    </div>
+                    <div className="mt-3">
+                      <Button
+                        size="sm"
+                        disabled={actionBusy !== null || !pickupDate}
+                        onClick={() => handleSchedulePickup(order)}
+                      >
+                        {actionBusy === "pickup" ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <CalendarClockIcon className="size-4" />
+                        )}
+                        Schedule pickup
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {pickupScheduled && (
+                  <div className="rounded-lg border border-dashed p-3 text-sm">
+                    <div className="flex items-center gap-2 font-medium">
+                      <CalendarClockIcon className="size-4 shrink-0" />
+                      Pickup scheduled with the courier
+                    </div>
+                    <div className="mt-1 grid gap-0.5 text-muted-foreground">
+                      {order.shipment_detail?.pickup_scheduled_date && (
+                        <p>
+                          Date:{" "}
+                          <span className="text-foreground">
+                            {formatPickupDate(
+                              order.shipment_detail.pickup_scheduled_date
+                            )}
+                          </span>
+                        </p>
+                      )}
+                      {order.shipment_detail?.pickup_token_number && (
+                        <p>
+                          Pickup token:{" "}
+                          <span className="font-mono text-foreground">
+                            {order.shipment_detail.pickup_token_number}
+                          </span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {order.shipment_detail && (
                   <div className="rounded-lg border p-4 text-sm">
@@ -382,6 +496,56 @@ function TotalsBlock({ order }: { order: OrderAdmin }) {
       </div>
     </div>
   )
+}
+
+// Local YYYY-MM-DD (not UTC) so the default date matches the admin's timezone.
+function toISODate(d: Date): string {
+  const tzOffsetMs = d.getTimezoneOffset() * 60_000
+  return new Date(d.getTime() - tzOffsetMs).toISOString().slice(0, 10)
+}
+
+function todayISODate(): string {
+  return toISODate(new Date())
+}
+
+// Shiprocket-style pickup date chips. We generate these ourselves (Today,
+// Tomorrow, then upcoming days) because Shiprocket's public API does not expose
+// the list of couriers' available slots. Sundays are skipped as most couriers
+// don't collect then; if the manager still hits an unavailable date, Shiprocket
+// shifts it to the nearest slot and we surface the confirmed date afterwards.
+function pickupDateOptions(): { value: string; label: string }[] {
+  const options: { value: string; label: string }[] = []
+  const start = new Date()
+  let offset = 0
+  while (options.length < 6) {
+    const d = new Date(start)
+    d.setDate(start.getDate() + offset)
+    offset += 1
+    if (d.getDay() === 0 && options.length > 0) continue // skip Sundays (keep today)
+    const value = toISODate(d)
+    let label: string
+    if (offset - 1 === 0) label = "Today"
+    else if (offset - 1 === 1) label = "Tomorrow"
+    else
+      label = d.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+      })
+    options.push({ value, label })
+  }
+  return options
+}
+
+// Formats "2026-09-18" or "2026-09-18 12:44:00" → "18 Sep 2026".
+function formatPickupDate(value: string): string {
+  const day = value.slice(0, 10)
+  const parsed = new Date(`${day}T00:00:00`)
+  if (Number.isNaN(parsed.getTime())) return value
+  return parsed.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  })
 }
 
 function Row({ label, value }: { label: string; value: string }) {
