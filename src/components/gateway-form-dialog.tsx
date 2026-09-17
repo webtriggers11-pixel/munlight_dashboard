@@ -36,6 +36,7 @@ export function GatewayFormDialog({
   const [displayName, setDisplayName] = useState("")
   const [keyId, setKeyId] = useState("")
   const [keySecret, setKeySecret] = useState("")
+  const [webhookSecret, setWebhookSecret] = useState("")
   const [isActive, setIsActive] = useState(true)
   const [isTestMode, setIsTestMode] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -46,6 +47,7 @@ export function GatewayFormDialog({
     setDisplayName(gateway?.display_name ?? "")
     setKeyId(gateway?.key_id ?? "")
     setKeySecret("")
+    setWebhookSecret("")
     setIsActive(gateway?.is_active ?? true)
     setIsTestMode(gateway?.is_test_mode ?? false)
   }, [open, gateway])
@@ -62,6 +64,7 @@ export function GatewayFormDialog({
           is_test_mode: isTestMode,
         }
         if (keySecret.trim()) payload.key_secret = keySecret
+        if (webhookSecret.trim()) payload.webhook_secret = webhookSecret
         await updateGateway(gateway.id, payload)
         toast.success("Gateway updated")
       } else {
@@ -73,6 +76,7 @@ export function GatewayFormDialog({
           is_active: isActive,
           is_test_mode: isTestMode,
         }
+        if (webhookSecret.trim()) payload.webhook_secret = webhookSecret
         await createGateway(payload)
         toast.success("Gateway created")
       }
@@ -139,6 +143,26 @@ export function GatewayFormDialog({
               placeholder={isEdit ? "Leave blank to keep current" : undefined}
               required={!isEdit}
             />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="gw-webhook-secret">
+              Webhook secret (optional)
+            </Label>
+            <Input
+              id="gw-webhook-secret"
+              type="password"
+              value={webhookSecret}
+              onChange={(e) => setWebhookSecret(e.target.value)}
+              placeholder={
+                isEdit
+                  ? "Leave blank to keep current"
+                  : "From Razorpay Dashboard → Webhooks"
+              }
+            />
+            <p className="text-xs text-muted-foreground">
+              Must exactly match the secret configured for this webhook in the
+              Razorpay dashboard — used to verify incoming webhook signatures.
+            </p>
           </div>
           <div className="flex flex-wrap gap-6">
             <label className="flex items-center gap-2 text-sm">
