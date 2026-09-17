@@ -96,6 +96,38 @@ function OrderDetailBody({
     }
   }
 
+  // Confirm + create shipment run as two independent backend calls (not one
+  // atomic endpoint) so a Shiprocket failure never rolls back an already-
+  // successful order confirmation — the order stays "confirmed" and the
+  // existing "Push to Shiprocket" button becomes the retry path.
+  async function handleConfirmAndShip(o: OrderAdmin) {
+    setActionBusy("confirm")
+    try {
+      await confirmOrder(o.id)
+    } catch (err) {
+      toast.error(apiErrorMessage(err))
+      setActionBusy(null)
+      refetch()
+      onUpdated?.()
+      return
+    }
+
+    setActionBusy("shipment")
+    try {
+      await createShipment(o.id)
+      toast.success("Order confirmed and pushed to Shiprocket")
+    } catch (err) {
+      toast.warning(
+        `Order confirmed, but shipment creation failed: ${apiErrorMessage(err)}. ` +
+          `Use "Push to Shiprocket" below to retry.`
+      )
+    } finally {
+      setActionBusy(null)
+      refetch()
+      onUpdated?.()
+    }
+  }
+
   // Pickup gets its own handler (not runAction) so we can compare the date the
   // manager picked against the date Shiprocket actually booked, and tell them
   // clearly when the requested slot wasn't available and got shifted.
@@ -214,14 +246,12 @@ function OrderDetailBody({
                     <Button
                       size="sm"
                       disabled={actionBusy !== null}
-                      onClick={() =>
-                        runAction("confirm", () => confirmOrder(order.id))
-                      }
+                      onClick={() => handleConfirmAndShip(order)}
                     >
-                      {actionBusy === "confirm" && (
+                      {(actionBusy === "confirm" || actionBusy === "shipment") && (
                         <Loader2 className="size-4 animate-spin" />
                       )}
-                      Confirm order
+                      Confirm & Create Shipment
                     </Button>
                   )}
                   {canConfirmCod && (
