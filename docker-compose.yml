@@ -1,0 +1,11 @@
+services:
+  dashboard:
+    build:
+      context: .
+      args:
+        VITE_API_URL: https://api.munlightblues.com/api
+        VITE_PUBLIC_WEBHOOK_URL: https://api.munlightblues.com/api/webhooks/shiprocket
+    container_name: munlight-dashboard
+    ports:
+      - "5173:80"
+    restart: unless-stopped
