@@ -50,13 +50,19 @@ const PAYMENT_BLOCKED: PaymentStatus[] = ["pending", "failed", "cancelled"]
 
 // Which statuses an admin can manually transition to from a given status.
 // "placed → confirmed" is intentionally excluded — use the /confirm endpoint.
+// shipped / out_for_delivery / delivered are no longer manually settable here —
+// they now advance automatically from Shiprocket's own status via the webhook
+// (or a manual "Sync tracking" pull as fallback). Manually setting them risked
+// getting out of sync with the real courier status, and "delivered" also
+// triggers auto-mark-COD-as-collected — that should only fire on a real
+// delivery confirmation, not a manual click.
 const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   pending:          ["cancelled"],
   placed:           ["cancelled"],           // confirm via dedicated button only
   confirmed:        ["processing", "cancelled"],
-  processing:       ["shipped", "cancelled"],
-  shipped:          ["out_for_delivery"],
-  out_for_delivery: ["delivered"],
+  processing:       ["cancelled"],
+  shipped:          [],
+  out_for_delivery: [],
   delivered:        ["refund_initiated"],
   cancelled:        ["refund_initiated"],
   refund_initiated: ["refunded"],
