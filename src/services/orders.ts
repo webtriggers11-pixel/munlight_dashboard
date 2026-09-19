@@ -94,3 +94,22 @@ export async function schedulePickup(
   await api.post(`/shipping/pickup/${orderId}`, { pickup_date: pickupDate })
   return getAdminOrder(orderId)
 }
+
+// ─── Shipment documents ──────────────────────────────────────────────────────
+// All three live on the /shipping router and return a Shiprocket-hosted PDF
+// URL, generated on demand. Preconditions the API enforces:
+//   label    — AWB assigned
+//   invoice  — shipment exists in Shiprocket
+//   manifest — shipment exists in Shiprocket (generated on first request)
+
+export type ShipmentDocument = "label" | "invoice" | "manifest"
+
+export async function getShipmentDocumentUrl(
+  orderId: number,
+  doc: ShipmentDocument
+): Promise<string> {
+  const { data } = await api.get<ApiEnvelope<{ url: string }>>(
+    `/shipping/${doc}/${orderId}`
+  )
+  return data.data.url
+}
