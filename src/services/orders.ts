@@ -85,6 +85,19 @@ export async function syncShipmentTracking(
   return getAdminOrder(orderId)
 }
 
+// Each returns a Shiprocket-hosted PDF URL for the order's shipment.
+export type ShipmentDocument = "label" | "invoice" | "manifest"
+
+export async function getShipmentDocumentUrl(
+  orderId: number,
+  document: ShipmentDocument
+): Promise<string> {
+  const { data } = await api.get<ApiEnvelope<{ url: string }>>(
+    `/shipping/${document}/${orderId}`
+  )
+  return data.data.url
+}
+
 // Schedules a Shiprocket pickup for a shipment that already has an AWB.
 // pickupDate must be YYYY-MM-DD. Lives on the /shipping router, not /orders.
 export async function schedulePickup(

@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from "react"
-import { CalendarClockIcon, ExternalLinkIcon, Loader2, TruckIcon } from "lucide-react"
+import {
+  CalendarClockIcon,
+  DownloadIcon,
+  ExternalLinkIcon,
+  Loader2,
+  TruckIcon,
+} from "lucide-react"
 import { toast } from "sonner"
 
 import { useAsync } from "@/hooks/use-async"
@@ -10,9 +16,11 @@ import {
   confirmOrder,
   createShipment,
   getAdminOrder,
+  getShipmentDocumentUrl,
   schedulePickup,
   syncShipmentTracking,
   updateOrderNotes,
+  type ShipmentDocument,
 } from "@/services/orders"
 import type { OrderAdmin } from "@/types/order"
 import {
@@ -152,6 +160,24 @@ function OrderDetailBody({
         )
       }
     } catch (err) {
+      toast.error(apiErrorMessage(err))
+    } finally {
+      setActionBusy(null)
+    }
+  }
+
+  // The tab is opened synchronously on click and pointed at the PDF afterwards,
+  // otherwise browsers block the popup because it opens after an await.
+  async function handleDocument(o: OrderAdmin, document: ShipmentDocument) {
+    const tab = window.open("", "_blank")
+    setActionBusy(document)
+    try {
+      const url = await getShipmentDocumentUrl(o.id, document)
+      if (tab) tab.location.href = url
+      else window.open(url, "_blank")
+      if (document === "label") refetch()
+    } catch (err) {
+      tab?.close()
       toast.error(apiErrorMessage(err))
     } finally {
       setActionBusy(null)
@@ -370,6 +396,44 @@ function OrderDetailBody({
                           </span>
                         </p>
                       )}
+                    </div>
+                  </div>
+                )}
+
+                {order.shipment_detail?.awb_number && (
+                  <div className="rounded-lg border p-4">
+                    <p className="text-sm font-medium">Shipping documents</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Print the invoice and put it in the box, and stick the
+                      label on the outside before the courier arrives.
+                      {!pickupScheduled &&
+                        " The manifest is available once pickup is scheduled."}
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {(
+                        [
+                          ["label", "Download label"],
+                          ["invoice", "Download invoice"],
+                          ...(pickupScheduled
+                            ? [["manifest", "Download manifest"]]
+                            : []),
+                        ] as [ShipmentDocument, string][]
+                      ).map(([doc, text]) => (
+                        <Button
+                          key={doc}
+                          size="sm"
+                          variant="outline"
+                          disabled={actionBusy !== null}
+                          onClick={() => handleDocument(order, doc)}
+                        >
+                          {actionBusy === doc ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <DownloadIcon className="size-4" />
+                          )}
+                          {text}
+                        </Button>
+                      ))}
                     </div>
                   </div>
                 )}
