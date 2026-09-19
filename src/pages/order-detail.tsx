@@ -526,6 +526,8 @@ function ShipmentCard({ order }: { order: OrderAdmin }) {
           <CardContent>
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
               Tracking events
+              {shipment.tracking_events.length > 0 &&
+                ` (${shipment.tracking_events.length})`}
             </p>
             {shipment.tracking_events.length === 0 ? (
               <p className="text-sm text-muted-foreground">
@@ -533,7 +535,7 @@ function ShipmentCard({ order }: { order: OrderAdmin }) {
                 webhook, or from “Sync tracking”.
               </p>
             ) : (
-              <ul className="flex flex-col">
+              <ul className="flex max-h-80 flex-col overflow-y-auto pr-2">
                 {shipment.tracking_events.map((ev, i) => (
                   <li key={i} className="flex gap-3.5">
                     <div className="flex flex-col items-center pt-1.5">
