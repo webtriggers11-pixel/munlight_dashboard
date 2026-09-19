@@ -14,6 +14,28 @@ export function formatNumber(value: number): string {
   return numFmt.format(value)
 }
 
+const inrWhole = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  maximumFractionDigits: 0,
+})
+
+// "₹12,34,567" — whole rupees, Indian digit grouping, for headline numbers.
+export function formatInr(value: number): string {
+  return inrWhole.format(Math.round(value))
+}
+
+// "₹1.2L" / "₹3.4Cr" — short form for chart axes, the way people say it in India.
+export function formatCompactInr(value: number): string {
+  const abs = Math.abs(value)
+  const sign = value < 0 ? "-" : ""
+  const trim = (n: number) => n.toFixed(1).replace(/\.0$/, "")
+  if (abs >= 1e7) return `${sign}₹${trim(abs / 1e7)}Cr`
+  if (abs >= 1e5) return `${sign}₹${trim(abs / 1e5)}L`
+  if (abs >= 1e3) return `${sign}₹${trim(abs / 1e3)}K`
+  return `${sign}₹${Math.round(abs)}`
+}
+
 export function formatDate(value: string | null): string {
   if (!value) return "—"
   const d = new Date(value)

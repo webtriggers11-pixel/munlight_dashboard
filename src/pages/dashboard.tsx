@@ -6,6 +6,7 @@ import { formatCurrency, formatDate } from "@/lib/format"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { SectionCards } from "@/components/section-cards"
 import { PageHeader } from "@/components/page-header"
+import { DashboardHighlights } from "@/components/dashboard-highlights"
 import { OrderStatusBadge, PaymentStatusBadge } from "@/components/status-badge"
 import {
   Card,
@@ -51,6 +52,7 @@ export default function DashboardPage() {
       />
       <SectionCards stats={data} />
       <ChartAreaInteractive />
+      <DashboardHighlights />
       <div>
         <Card>
           <CardHeader>

@@ -11,6 +11,8 @@ import {
   StoreIcon,
   CreditCardIcon,
   TruckIcon,
+  SettingsIcon,
+  TrendingUpIcon,
 } from "lucide-react"
 
 import { config } from "@/constants/config"
@@ -29,7 +31,8 @@ import {
 
 const navItems = [
   { title: "Dashboard",      url: "/",               icon: LayoutDashboardIcon },
-  { title: "Products",       url: "/products",        icon: PackageIcon },
+  { title: "Sales & Insights", url: "/insights",     icon: TrendingUpIcon, superAdminOnly: true },
+  { title: "Products",      url: "/products",        icon: PackageIcon },
   { title: "Bulk Upload",    url: "/bulk-upload",     icon: UploadCloudIcon, superAdminOnly: true },
   { title: "Categories",     url: "/categories",      icon: FolderTreeIcon },
   { title: "Orders",         url: "/orders",          icon: ShoppingCartIcon },
@@ -37,6 +40,7 @@ const navItems = [
   { title: "Store Settings", url: "/store-settings",  icon: StoreIcon },
   { title: "Payments",       url: "/payments",        icon: CreditCardIcon },
   { title: "Shipping",       url: "/shipping",        icon: TruckIcon },
+  { title: "Shipping Setup", url: "/shipping-setup",  icon: SettingsIcon, superAdminOnly: true },
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -72,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 const isActive =
                   item.url === "/"
                     ? pathname === "/"
-                    : pathname.startsWith(item.url)
+                    : pathname === item.url || pathname.startsWith(`${item.url}/`)
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton

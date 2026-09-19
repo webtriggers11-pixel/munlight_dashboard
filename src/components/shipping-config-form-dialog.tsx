@@ -2,9 +2,12 @@ import { useEffect, useState, type FormEvent } from "react"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
+import { useAsync } from "@/hooks/use-async"
 import { apiErrorMessage } from "@/lib/api"
+import { useAuth } from "@/lib/auth"
 import {
   createShippingConfig,
+  listShippingProviders,
   updateShippingConfig,
 } from "@/services/shipping-config"
 import type {
@@ -24,12 +27,21 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 
 interface ShippingConfigFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   config: ShippingConfig | null
+  // true on the Shipping Setup page: shows the provider picker and API address field.
+  setup?: boolean
   onSaved: () => void
 }
 
@@ -37,10 +49,17 @@ export function ShippingConfigFormDialog({
   open,
   onOpenChange,
   config,
+  setup = false,
   onSaved,
 }: ShippingConfigFormDialogProps) {
   const isEdit = !!config
+  const { user } = useAuth()
+  // Only a super admin can add a provider or change where its requests are sent, and only
+  // from the Shipping Setup page.
+  const isSuperAdmin = setup && user?.role === "super_admin"
+  const { data: providerOptions } = useAsync(listShippingProviders, [])
   const [provider, setProvider] = useState("shiprocket")
+  const [baseUrl, setBaseUrl] = useState("")
   const [displayName, setDisplayName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -51,12 +70,24 @@ export function ShippingConfigFormDialog({
   useEffect(() => {
     if (!open) return
     setProvider(config?.provider ?? "shiprocket")
+    setBaseUrl(config?.base_url ?? "")
     setDisplayName(config?.display_name ?? "")
     setEmail(config?.email ?? "")
     setPassword(config?.password ?? "")
     setIsActive(config?.is_active ?? false)
     setIsTestMode(config?.is_test_mode ?? true)
   }, [open, config])
+
+  // What the provider uses when the address field is left blank.
+  const defaultBaseUrl =
+    providerOptions?.find((p) => p.provider === (config?.provider ?? provider))
+      ?.default_base_url ?? ""
+
+  function chooseProvider(value: string) {
+    setProvider(value)
+    const option = providerOptions?.find((p) => p.provider === value)
+    if (option && !displayName.trim()) setDisplayName(option.display_name)
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -73,6 +104,10 @@ export function ShippingConfigFormDialog({
         if (password.trim() && password !== config.password) {
           payload.password = password
         }
+        // Blank clears the override. Only send it when it actually changed.
+        if (isSuperAdmin && baseUrl.trim() !== (config.base_url ?? "")) {
+          payload.base_url = baseUrl.trim()
+        }
         await updateShippingConfig(config.id, payload)
         toast.success("Shipping config updated")
       } else {
@@ -84,6 +119,7 @@ export function ShippingConfigFormDialog({
           is_active: isActive,
           is_test_mode: isTestMode,
         }
+        if (baseUrl.trim()) payload.base_url = baseUrl.trim()
         await createShippingConfig(payload)
         toast.success("Shipping config created")
       }
@@ -104,21 +140,27 @@ export function ShippingConfigFormDialog({
             {isEdit ? "Edit shipping provider" : "Add shipping provider"}
           </DialogTitle>
           <DialogDescription>
-            Shiprocket API credentials. The password is shown masked — click it
-            and type to replace it, or leave it as is to keep the current value.
+            API credentials for the courier aggregator. The password is shown
+            masked — click it and type to replace it, or leave it as is to keep
+            the current value.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4">
           {!isEdit && (
             <div className="grid gap-2">
               <Label htmlFor="sp-provider">Provider</Label>
-              <Input
-                id="sp-provider"
-                value={provider}
-                onChange={(e) => setProvider(e.target.value)}
-                placeholder="shiprocket"
-                required
-              />
+              <Select value={provider} onValueChange={chooseProvider}>
+                <SelectTrigger id="sp-provider">
+                  <SelectValue placeholder="Choose an aggregator…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(providerOptions ?? []).map((p) => (
+                    <SelectItem key={p.provider} value={p.provider}>
+                      {p.display_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
           <div className="grid gap-2">
@@ -149,6 +191,31 @@ export function ShippingConfigFormDialog({
               saved={config?.password}
             />
           </div>
+          {isSuperAdmin ? (
+            <div className="grid gap-2">
+              <Label htmlFor="sp-base-url">API address (advanced)</Label>
+              <Input
+                id="sp-base-url"
+                className="font-mono text-xs"
+                value={baseUrl}
+                onChange={(e) => setBaseUrl(e.target.value)}
+                placeholder={defaultBaseUrl || "https://api.example.com/v1"}
+                autoComplete="off"
+              />
+              <p className="text-xs text-muted-foreground">
+                Leave blank to use the default
+                {defaultBaseUrl ? ` (${defaultBaseUrl})` : ""}. Change it only
+                for a sandbox or if the aggregator moves its API.
+              </p>
+            </div>
+          ) : (
+            config?.effective_base_url && (
+              <p className="break-all text-xs text-muted-foreground">
+                API address: <span className="font-mono">{config.effective_base_url}</span>{" "}
+                (only a super admin can change this)
+              </p>
+            )
+          )}
           <div className="flex flex-wrap gap-6">
             <label className="flex items-center gap-2 text-sm">
               <Switch checked={isActive} onCheckedChange={setIsActive} />
@@ -163,7 +230,7 @@ export function ShippingConfigFormDialog({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={saving || !password.trim()}>
+            <Button type="submit" disabled={saving || !password.trim() || (!isEdit && !provider)}>
               {saving && <Loader2 className="size-4 animate-spin" />}
               {isEdit ? "Save" : "Create"}
             </Button>

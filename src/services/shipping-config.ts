@@ -4,6 +4,7 @@ import type {
   ShippingConfig,
   ShippingConfigCreate,
   ShippingConfigUpdate,
+  ShippingProviderOption,
   ShippingTestResult,
   SyncPickupResult,
 } from "@/types/shipping-config"
@@ -11,6 +12,13 @@ import type {
 export async function listShippingConfigs(): Promise<ShippingConfig[]> {
   const { data } = await api.get<ApiEnvelope<ShippingConfig[]>>(
     "/admin/shipping-config"
+  )
+  return data.data
+}
+
+export async function listShippingProviders(): Promise<ShippingProviderOption[]> {
+  const { data } = await api.get<ApiEnvelope<ShippingProviderOption[]>>(
+    "/admin/shipping-config/providers"
   )
   return data.data
 }

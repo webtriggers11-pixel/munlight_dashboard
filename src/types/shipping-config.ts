@@ -10,8 +10,19 @@ export interface ShippingConfig {
   has_valid_token: boolean
   webhook_secret: string | null
   extra_config: string | null
+  // Address override saved by a super admin; null = using the default.
+  base_url: string | null
+  // The address requests are actually sent to.
+  effective_base_url: string
   created_at: string
   updated_at: string | null
+}
+
+// An aggregator this build of the API supports (GET /admin/shipping-config/providers).
+export interface ShippingProviderOption {
+  provider: string
+  display_name: string
+  default_base_url: string
 }
 
 export interface ShippingConfigCreate {
@@ -23,6 +34,8 @@ export interface ShippingConfigCreate {
   is_test_mode?: boolean
   webhook_secret?: string
   extra_config?: string
+  // Super admin only. On update, "" removes the override.
+  base_url?: string
 }
 
 export type ShippingConfigUpdate = Partial<

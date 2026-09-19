@@ -5,6 +5,7 @@ import { SuperAdminRoute } from "@/components/super-admin-route"
 import { DashboardLayout } from "@/layouts/dashboard-layout"
 import LoginPage from "@/pages/login"
 import DashboardPage from "@/pages/dashboard"
+import InsightsPage from "@/pages/insights"
 import OrdersPage from "@/pages/orders"
 import OrderDetailPage from "@/pages/order-detail"
 import ProductsPage from "@/pages/products"
@@ -15,6 +16,7 @@ import UsersPage from "@/pages/users"
 import StoreSettingsPage from "@/pages/store-settings"
 import PaymentsPage from "@/pages/payments"
 import ShippingPage from "@/pages/shipping"
+import ShippingSetupPage from "@/pages/shipping-setup"
 
 function App() {
   return (
@@ -28,7 +30,9 @@ function App() {
           <Route path="products" element={<ProductsPage />} />
           <Route path="products/:slug" element={<ProductDetailPage />} />
           <Route element={<SuperAdminRoute />}>
+            <Route path="insights" element={<InsightsPage />} />
             <Route path="bulk-upload" element={<BulkUploadPage />} />
+            <Route path="shipping-setup" element={<ShippingSetupPage />} />
           </Route>
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="users" element={<UsersPage />} />
