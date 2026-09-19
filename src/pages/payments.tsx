@@ -92,6 +92,8 @@ export default function PaymentsPage() {
                   <TableHead>Gateway</TableHead>
                   <TableHead>Display name</TableHead>
                   <TableHead>Key ID</TableHead>
+                  <TableHead>Key secret</TableHead>
+                  <TableHead>Webhook</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -102,6 +104,18 @@ export default function PaymentsPage() {
                     <TableCell className="font-medium capitalize">{gw.gateway}</TableCell>
                     <TableCell>{gw.display_name}</TableCell>
                     <TableCell className="font-mono text-xs">{gw.key_id}</TableCell>
+                    <TableCell className="font-mono text-xs">{gw.key_secret}</TableCell>
+                    <TableCell>
+                      {gw.webhook_secret ? (
+                        <Badge variant="secondary">
+                          Secret set · {gw.webhook_secret.slice(-4)}
+                        </Badge>
+                      ) : gw.gateway === "razorpay" ? (
+                        <Badge variant="outline">Not configured</Badge>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         <ActivePill active={gw.is_active} />
