@@ -1,3 +1,5 @@
+import type { AuditUserRef } from "@/types/common"
+
 export interface Category {
   id         : number
   name       : string
@@ -8,6 +10,9 @@ export interface Category {
   sort_order : number
   is_active  : boolean
   created_at : string
+  updated_at : string | null
+  created_by : AuditUserRef | null
+  updated_by : AuditUserRef | null
   children   : Category[]
 }
 

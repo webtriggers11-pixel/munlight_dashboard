@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
 import { Loader2, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
 import { toast } from "sonner"
 
@@ -35,15 +36,59 @@ import {
 import { RemoteImage } from "@/components/remote-image"
 import { PageHeader } from "@/components/page-header"
 import { CategoryFormDialog } from "@/components/category-form-dialog"
+import { SearchInput } from "@/components/search-input"
+import { AuditCell } from "@/components/audit-cell"
+
+function matchesSearch(name: string, slug: string, q: string): boolean {
+  return name.toLowerCase().includes(q) || slug.toLowerCase().includes(q)
+}
 
 export default function CategoriesPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<Category | null>(null)
   const [deleting, setDeleting] = useState<Category | null>(null)
   const [deletingBusy, setDeletingBusy] = useState(false)
+  const [search, setSearch] = useState("")
   const { data, loading, error, refetch } = useAsync(listCategoryHierarchy, [])
   // Flat list used by the form dialog's parent-category dropdown
   const { data: flatCategories } = useAsync(listCategories, [])
+
+  // Deep link from global search: navigate("/categories", { state: { focusCategoryId } })
+  const location = useLocation()
+  const navigate = useNavigate()
+  useEffect(() => {
+    const focusId = (location.state as { focusCategoryId?: number } | null)?.focusCategoryId
+    if (!focusId || !flatCategories) return
+    const target = flatCategories.find((c) => c.id === focusId)
+    if (target) {
+      setEditing(target)
+      setDialogOpen(true)
+    }
+    // Clear the state so refreshing/navigating back doesn't reopen the dialog
+    navigate(location.pathname, { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flatCategories, location.state])
+
+  // Filter the hierarchy client-side: a category matches on its own name/slug,
+  // or by having at least one matching subcategory (in which case only the
+  // matching subcategories are shown under it, for a focused result).
+  const q = search.trim().toLowerCase()
+  const filteredData =
+    q.length === 0
+      ? data
+      : (data ?? [])
+          .map((category) => {
+            const selfMatches = matchesSearch(category.name, category.slug, q)
+            const matchingChildren = (category.children ?? []).filter((c) =>
+              matchesSearch(c.name, c.slug, q)
+            )
+            if (!selfMatches && matchingChildren.length === 0) return null
+            return {
+              ...category,
+              children: selfMatches ? category.children : matchingChildren,
+            }
+          })
+          .filter((c): c is Category => c !== null)
 
   function openCreate() {
     setEditing(null)
@@ -85,6 +130,14 @@ export default function CategoriesPage() {
 
       <Card>
         <CardContent className="pt-6">
+          <div className="mb-4">
+            <SearchInput
+              value={search}
+              onChange={setSearch}
+              placeholder="Search categories by name or slug…"
+            />
+          </div>
+
           {loading ? (
             <div className="flex h-48 items-center justify-center text-muted-foreground">
               <Loader2 className="size-5 animate-spin" />
@@ -93,6 +146,10 @@ export default function CategoriesPage() {
             <p className="text-sm text-destructive">{error}</p>
           ) : !data || data.length === 0 ? (
             <p className="text-sm text-muted-foreground">No categories found.</p>
+          ) : !filteredData || filteredData.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No categories match “{search.trim()}”.
+            </p>
           ) : (
             <Table>
               <TableHeader>
@@ -102,17 +159,20 @@ export default function CategoriesPage() {
                   <TableHead>Slug</TableHead>
                   <TableHead className="text-right">Sort</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Updated</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.flatMap((category) => [
+                {filteredData.flatMap((category) => [
                   // Top-level category row
                   <TableRow key={category.id}>
                     <TableCell>
                       <RemoteImage
                         value={category.image}
                         alt={category.name}
+                        fallbackLabel={category.name}
                         className="size-10"
                       />
                     </TableCell>
@@ -132,6 +192,12 @@ export default function CategoriesPage() {
                     </TableCell>
                     <TableCell>
                       <ActivePill active={category.is_active} />
+                    </TableCell>
+                    <TableCell>
+                      <AuditCell at={category.created_at} by={category.created_by} />
+                    </TableCell>
+                    <TableCell>
+                      <AuditCell at={category.updated_at} by={category.updated_by} />
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
@@ -161,6 +227,7 @@ export default function CategoriesPage() {
                         <RemoteImage
                           value={sub.image}
                           alt={sub.name}
+                          fallbackLabel={sub.name}
                           className="size-8 ml-4"
                         />
                       </TableCell>
@@ -175,6 +242,12 @@ export default function CategoriesPage() {
                       </TableCell>
                       <TableCell>
                         <ActivePill active={sub.is_active} />
+                      </TableCell>
+                      <TableCell>
+                        <AuditCell at={sub.created_at} by={sub.created_by} />
+                      </TableCell>
+                      <TableCell>
+                        <AuditCell at={sub.updated_at} by={sub.updated_by} />
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">

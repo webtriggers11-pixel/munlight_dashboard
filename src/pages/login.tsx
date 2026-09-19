@@ -66,7 +66,7 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 autoComplete="email"
-                placeholder="admin@moonlightblue.in"
+                placeholder="admin@munlightblues.in"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-11 pl-9"

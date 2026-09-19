@@ -4,6 +4,7 @@ export interface GatewayConfig {
   display_name: string
   key_id: string
   key_secret: string
+  webhook_secret: string | null
   extra_config: string | null
   is_active: boolean
   is_test_mode: boolean
@@ -16,6 +17,7 @@ export interface GatewayConfigCreate {
   display_name: string
   key_id: string
   key_secret: string
+  webhook_secret?: string
   extra_config?: string
   is_active?: boolean
   is_test_mode?: boolean

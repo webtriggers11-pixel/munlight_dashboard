@@ -10,10 +10,16 @@ import type { Order, OrderAdmin, OrderStatusUpdate } from "@/types/order"
 export async function listOrders(
   page = 1,
   pageSize = 20,
-  status?: OrderStatus
+  status?: OrderStatus,
+  search?: string
 ): Promise<Paginated<Order>> {
   const { data } = await api.get<PaginatedEnvelope<Order>>("/orders", {
-    params: { page, page_size: pageSize, ...(status ? { status } : {}) },
+    params: {
+      page,
+      page_size: pageSize,
+      ...(status ? { status } : {}),
+      search: search?.trim() || undefined,
+    },
   })
   return {
     items: data.data,
@@ -77,4 +83,33 @@ export async function syncShipmentTracking(
 ): Promise<OrderAdmin> {
   await api.post(`/orders/${orderId}/shipment/sync`)
   return getAdminOrder(orderId)
+}
+
+// Schedules a Shiprocket pickup for a shipment that already has an AWB.
+// pickupDate must be YYYY-MM-DD. Lives on the /shipping router, not /orders.
+export async function schedulePickup(
+  orderId: number,
+  pickupDate: string
+): Promise<OrderAdmin> {
+  await api.post(`/shipping/pickup/${orderId}`, { pickup_date: pickupDate })
+  return getAdminOrder(orderId)
+}
+
+// ─── Shipment documents ──────────────────────────────────────────────────────
+// All three live on the /shipping router and return a Shiprocket-hosted PDF
+// URL, generated on demand. Preconditions the API enforces:
+//   label    — AWB assigned
+//   invoice  — shipment exists in Shiprocket
+//   manifest — shipment exists in Shiprocket (generated on first request)
+
+export type ShipmentDocument = "label" | "invoice" | "manifest"
+
+export async function getShipmentDocumentUrl(
+  orderId: number,
+  doc: ShipmentDocument
+): Promise<string> {
+  const { data } = await api.get<ApiEnvelope<{ url: string }>>(
+    `/shipping/${doc}/${orderId}`
+  )
+  return data.data.url
 }

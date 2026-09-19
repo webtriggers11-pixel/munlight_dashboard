@@ -1,12 +1,15 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 
 import { ProtectedRoute } from "@/components/protected-route"
+import { SuperAdminRoute } from "@/components/super-admin-route"
 import { DashboardLayout } from "@/layouts/dashboard-layout"
 import LoginPage from "@/pages/login"
 import DashboardPage from "@/pages/dashboard"
 import OrdersPage from "@/pages/orders"
+import OrderDetailPage from "@/pages/order-detail"
 import ProductsPage from "@/pages/products"
 import ProductDetailPage from "@/pages/product-detail"
+import BulkUploadPage from "@/pages/bulk-upload"
 import CategoriesPage from "@/pages/categories"
 import UsersPage from "@/pages/users"
 import StoreSettingsPage from "@/pages/store-settings"
@@ -21,8 +24,12 @@ function App() {
         <Route element={<DashboardLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="orders/:orderId" element={<OrderDetailPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="products/:slug" element={<ProductDetailPage />} />
+          <Route element={<SuperAdminRoute />}>
+            <Route path="bulk-upload" element={<BulkUploadPage />} />
+          </Route>
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="store-settings" element={<StoreSettingsPage />} />

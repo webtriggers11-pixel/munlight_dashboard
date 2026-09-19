@@ -83,6 +83,9 @@ export interface ShipmentDetail {
   shipping_cost_charged: number
   shipping_cost_actual: number
   estimated_delivery: string | null
+  pickup_scheduled_at: string | null
+  pickup_scheduled_date: string | null
+  pickup_token_number: string | null
   shipped_at: string | null
   delivered_at: string | null
   tracking_events: TrackingEvent[]

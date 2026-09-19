@@ -1,15 +1,21 @@
-import { useEffect, useState } from "react"
-import { ExternalLinkIcon, Loader2, TruckIcon } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { CalendarClockIcon, ExternalLinkIcon, Loader2, TruckIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import { useAsync } from "@/hooks/use-async"
 import { formatCurrency, formatDate, titleCase } from "@/lib/format"
+import {
+  formatPickupDate,
+  pickupDateOptions,
+  todayISODate,
+} from "@/lib/pickup-dates"
 import { apiErrorMessage } from "@/lib/api"
 import {
   confirmCod,
   confirmOrder,
   createShipment,
   getAdminOrder,
+  schedulePickup,
   syncShipmentTracking,
   updateOrderNotes,
 } from "@/services/orders"
@@ -64,6 +70,10 @@ function OrderDetailBody({
 }) {
   const [notes, setNotes] = useState("")
   const [actionBusy, setActionBusy] = useState<string | null>(null)
+  const pickupOptions = useMemo(() => pickupDateOptions(), [])
+  const [pickupDate, setPickupDate] = useState(
+    () => pickupOptions[0]?.value ?? todayISODate()
+  )
 
   const { data: order, loading, error, refetch } = useAsync(
     () => getAdminOrder(orderId),
@@ -91,6 +101,68 @@ function OrderDetailBody({
     }
   }
 
+  // Confirm + create shipment run as two independent backend calls (not one
+  // atomic endpoint) so a Shiprocket failure never rolls back an already-
+  // successful order confirmation — the order stays "confirmed" and the
+  // existing "Push to Shiprocket" button becomes the retry path.
+  async function handleConfirmAndShip(o: OrderAdmin) {
+    setActionBusy("confirm")
+    try {
+      await confirmOrder(o.id)
+    } catch (err) {
+      toast.error(apiErrorMessage(err))
+      setActionBusy(null)
+      refetch()
+      onUpdated?.()
+      return
+    }
+
+    setActionBusy("shipment")
+    try {
+      await createShipment(o.id)
+      toast.success("Order confirmed and pushed to Shiprocket")
+    } catch (err) {
+      toast.warning(
+        `Order confirmed, but shipment creation failed: ${apiErrorMessage(err)}. ` +
+          `Use "Push to Shiprocket" below to retry.`
+      )
+    } finally {
+      setActionBusy(null)
+      refetch()
+      onUpdated?.()
+    }
+  }
+
+  // Pickup gets its own handler (not runAction) so we can compare the date the
+  // manager picked against the date Shiprocket actually booked, and tell them
+  // clearly when the requested slot wasn't available and got shifted.
+  async function handleSchedulePickup(o: OrderAdmin) {
+    setActionBusy("pickup")
+    try {
+      const updated = await schedulePickup(o.id, pickupDate)
+      refetch()
+      onUpdated?.()
+      const booked = updated.shipment_detail?.pickup_scheduled_date
+      const bookedDay = booked ? booked.slice(0, 10) : null
+      if (bookedDay && bookedDay !== pickupDate) {
+        toast.warning(
+          `Requested ${formatPickupDate(pickupDate)} wasn't available — ` +
+            `Shiprocket scheduled pickup for ${formatPickupDate(bookedDay)}.`
+        )
+      } else {
+        toast.success(
+          bookedDay
+            ? `Pickup scheduled for ${formatPickupDate(bookedDay)}`
+            : "Pickup scheduled"
+        )
+      }
+    } catch (err) {
+      toast.error(apiErrorMessage(err))
+    } finally {
+      setActionBusy(null)
+    }
+  }
+
   const canConfirm =
     order?.status === "placed" &&
     (order.payment_status === "success" ||
@@ -104,6 +176,15 @@ function OrderDetailBody({
     order?.status === "confirmed" && !order.shipment_detail?.awb_number
 
   const hasShipment = !!order?.shipment_detail
+
+  // Pickup can be scheduled once an AWB exists and the courier hasn't picked it
+  // up yet. The backend rejects a second schedule, so hide it afterwards.
+  const canSchedulePickup =
+    !!order?.shipment_detail?.awb_number &&
+    order.shipment_detail.shipment_status === "label_created"
+
+  const pickupScheduled =
+    order?.shipment_detail?.shipment_status === "pickup_scheduled"
 
   return (
     <>
@@ -170,14 +251,12 @@ function OrderDetailBody({
                     <Button
                       size="sm"
                       disabled={actionBusy !== null}
-                      onClick={() =>
-                        runAction("confirm", () => confirmOrder(order.id))
-                      }
+                      onClick={() => handleConfirmAndShip(order)}
                     >
-                      {actionBusy === "confirm" && (
+                      {(actionBusy === "confirm" || actionBusy === "shipment") && (
                         <Loader2 className="size-4 animate-spin" />
                       )}
-                      Confirm order
+                      Confirm & Create Shipment
                     </Button>
                   )}
                   {canConfirmCod && (
@@ -229,6 +308,76 @@ function OrderDetailBody({
                     </Button>
                   )}
                 </div>
+
+                {canSchedulePickup && (
+                  <div className="rounded-lg border p-4">
+                    <p className="text-sm font-medium">Schedule pickup</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Select a date for the courier to collect this shipment. If
+                      the date isn&apos;t available, Shiprocket books the nearest
+                      slot and we&apos;ll show the confirmed date.
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {pickupOptions.map((opt) => (
+                        <Button
+                          key={opt.value}
+                          type="button"
+                          size="sm"
+                          variant={
+                            pickupDate === opt.value ? "default" : "outline"
+                          }
+                          disabled={actionBusy !== null}
+                          onClick={() => setPickupDate(opt.value)}
+                        >
+                          {opt.label}
+                        </Button>
+                      ))}
+                    </div>
+                    <div className="mt-3">
+                      <Button
+                        size="sm"
+                        disabled={actionBusy !== null || !pickupDate}
+                        onClick={() => handleSchedulePickup(order)}
+                      >
+                        {actionBusy === "pickup" ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <CalendarClockIcon className="size-4" />
+                        )}
+                        Schedule pickup
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {pickupScheduled && (
+                  <div className="rounded-lg border border-dashed p-3 text-sm">
+                    <div className="flex items-center gap-2 font-medium">
+                      <CalendarClockIcon className="size-4 shrink-0" />
+                      Pickup scheduled with the courier
+                    </div>
+                    <div className="mt-1 grid gap-0.5 text-muted-foreground">
+                      {order.shipment_detail?.pickup_scheduled_date && (
+                        <p>
+                          Date:{" "}
+                          <span className="text-foreground">
+                            {formatPickupDate(
+                              order.shipment_detail.pickup_scheduled_date
+                            )}
+                          </span>
+                        </p>
+                      )}
+                      {order.shipment_detail?.pickup_token_number && (
+                        <p>
+                          Pickup token:{" "}
+                          <span className="font-mono text-foreground">
+                            {order.shipment_detail.pickup_token_number}
+                          </span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {order.shipment_detail && (
                   <div className="rounded-lg border p-4 text-sm">

@@ -1,3 +1,5 @@
+import type { AuditUserRef } from "@/types/common"
+
 export interface Product {
   id              : number
   name            : string
@@ -28,6 +30,9 @@ export interface Product {
   material        : string | null
   color           : string | null
   created_at      : string
+  updated_at      : string | null
+  created_by      : AuditUserRef | null
+  updated_by      : AuditUserRef | null
 }
 
 export interface ProductCreate {

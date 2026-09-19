@@ -27,6 +27,12 @@ export interface Paginated<T> {
 
 export type UserRole = "customer" | "admin" | "super_admin"
 
+export interface AuditUserRef {
+  id: number
+  full_name: string
+  email: string
+}
+
 export type OrderStatus =
   | "pending"
   | "placed"

@@ -1,19 +1,21 @@
 import { useState } from "react"
-import { EyeIcon, Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { Link, useNavigate } from "react-router-dom"
+import { ChevronRightIcon, Loader2 } from "lucide-react"
 
 import { useAsync } from "@/hooks/use-async"
-import { apiErrorMessage } from "@/lib/api"
+import { useDebounce } from "@/hooks/use-debounce"
 import { formatCurrency, formatDate, titleCase } from "@/lib/format"
-import { listOrders, updateOrderStatus } from "@/services/orders"
-import type { OrderStatus, PaymentStatus } from "@/types/common"
-import type { Order } from "@/types/order"
-import { Button } from "@/components/ui/button"
-import { PaymentStatusBadge } from "@/components/status-badge"
+import { ALL_ORDER_STATUSES } from "@/lib/order-transitions"
+import { listOrders } from "@/services/orders"
+import type { OrderStatus } from "@/types/common"
+import {
+  OrderStatusBadge,
+  PaymentStatusBadge,
+} from "@/components/status-badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { PaginationBar } from "@/components/pagination-bar"
 import { PageHeader } from "@/components/page-header"
-import { OrderDetailDialog } from "@/components/order-detail-dialog"
+import { SearchInput } from "@/components/search-input"
 import {
   Select,
   SelectContent,
@@ -30,70 +32,28 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-const ALL_ORDER_STATUSES: OrderStatus[] = [
-  "pending",
-  "placed",
-  "confirmed",
-  "processing",
-  "shipped",
-  "out_for_delivery",
-  "delivered",
-  "cancelled",
-  "refund_initiated",
-  "refunded",
-]
-
-// Statuses that block payment — cannot confirm
-const PAYMENT_BLOCKED: PaymentStatus[] = ["pending", "failed", "cancelled"]
-
-// Which statuses an admin can manually transition to from a given status.
-// "placed → confirmed" is intentionally excluded — use the /confirm endpoint.
-const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
-  pending:          ["cancelled"],
-  placed:           ["cancelled"],           // confirm via dedicated button only
-  confirmed:        ["processing", "cancelled"],
-  processing:       ["shipped", "cancelled"],
-  shipped:          ["out_for_delivery"],
-  out_for_delivery: ["delivered"],
-  delivered:        ["refund_initiated"],
-  cancelled:        ["refund_initiated"],
-  refund_initiated: ["refunded"],
-  refunded:         [],
-}
-
-function getAllowedStatuses(order: Order): OrderStatus[] {
-  const base = ALLOWED_TRANSITIONS[order.status] ?? []
-  // If payment is not resolved, block confirm even though placed → confirmed
-  // is already excluded above; also block any forward moves for pending orders
-  if (PAYMENT_BLOCKED.includes(order.payment_status)) {
-    return base.filter((s) => s === "cancelled")
-  }
-  return base
-}
-
 const ALL = "all"
 
 export default function OrdersPage() {
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState<string>(ALL)
-  const [busyId, setBusyId] = useState<number | null>(null)
-  const [detailId, setDetailId] = useState<number | null>(null)
-  const { data, loading, error, refetch } = useAsync(
-    () => listOrders(page, 20, filter === ALL ? undefined : (filter as OrderStatus)),
-    [page, filter]
+  const [search, setSearch] = useState("")
+  const debouncedSearch = useDebounce(search, 300)
+  const navigate = useNavigate()
+  const { data, loading, error } = useAsync(
+    () =>
+      listOrders(
+        page,
+        20,
+        filter === ALL ? undefined : (filter as OrderStatus),
+        debouncedSearch
+      ),
+    [page, filter, debouncedSearch]
   )
 
-  async function handleStatusChange(orderId: number, status: OrderStatus) {
-    setBusyId(orderId)
-    try {
-      await updateOrderStatus(orderId, { status })
-      toast.success(`Order updated to ${titleCase(status)}`)
-      refetch()
-    } catch (err) {
-      toast.error(apiErrorMessage(err))
-    } finally {
-      setBusyId(null)
-    }
+  function handleSearchChange(value: string) {
+    setSearch(value)
+    setPage(1)
   }
 
   return (
@@ -126,6 +86,15 @@ export default function OrdersPage() {
 
       <Card>
         <CardContent className="pt-6">
+          <div className="mb-4">
+            <SearchInput
+              value={search}
+              onChange={handleSearchChange}
+              placeholder="Search by order number, customer name, phone, or email…"
+              className="max-w-md"
+            />
+          </div>
+
           {loading ? (
             <div className="flex h-48 items-center justify-center text-muted-foreground">
               <Loader2 className="size-5 animate-spin" />
@@ -133,7 +102,11 @@ export default function OrdersPage() {
           ) : error ? (
             <p className="text-sm text-destructive">{error}</p>
           ) : !data || data.items.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No orders found.</p>
+            <p className="text-sm text-muted-foreground">
+              {debouncedSearch
+                ? `No orders match “${debouncedSearch}”.`
+                : "No orders found."}
+            </p>
           ) : (
             <>
               <Table>
@@ -144,15 +117,33 @@ export default function OrdersPage() {
                     <TableHead>Date</TableHead>
                     <TableHead>Payment</TableHead>
                     <TableHead className="text-right">Total</TableHead>
-                    <TableHead className="w-52">Status</TableHead>
-                    <TableHead className="w-12" />
+                    <TableHead>Status</TableHead>
+                    <TableHead className="w-10" />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {data.items.map((order) => (
-                    <TableRow key={order.id}>
+                    <TableRow
+                      key={order.id}
+                      onClick={(e) => {
+                        // Let a modifier-click open the order in a new tab, the
+                        // way clicking the order-number link would.
+                        if (e.metaKey || e.ctrlKey) {
+                          window.open(`/orders/${order.id}`, "_blank", "noopener")
+                          return
+                        }
+                        navigate(`/orders/${order.id}`)
+                      }}
+                      className="cursor-pointer"
+                    >
                       <TableCell className="font-medium">
-                        {order.order_number}
+                        <Link
+                          to={`/orders/${order.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="hover:underline"
+                        >
+                          {order.order_number}
+                        </Link>
                       </TableCell>
                       <TableCell>{order.shipping_name}</TableCell>
                       <TableCell>{formatDate(order.created_at)}</TableCell>
@@ -163,44 +154,13 @@ export default function OrdersPage() {
                         {formatCurrency(order.total)}
                       </TableCell>
                       <TableCell>
-                        {(() => {
-                          const next = getAllowedStatuses(order)
-                          const isTerminal = next.length === 0
-                          return (
-                            <Select
-                              value={order.status}
-                              disabled={busyId === order.id || isTerminal}
-                              onValueChange={(v) =>
-                                handleStatusChange(order.id, v as OrderStatus)
-                              }
-                            >
-                              <SelectTrigger size="sm" className="w-full capitalize">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {/* Current status shown as non-selectable label */}
-                                <SelectItem value={order.status} className="capitalize font-medium" disabled>
-                                  {titleCase(order.status)} (current)
-                                </SelectItem>
-                                {next.map((s) => (
-                                  <SelectItem key={s} value={s} className="capitalize">
-                                    {titleCase(s)}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          )
-                        })()}
+                        <OrderStatusBadge status={order.status} />
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setDetailId(order.id)}
-                          aria-label="View order"
-                        >
-                          <EyeIcon />
-                        </Button>
+                        <ChevronRightIcon
+                          className="size-4 text-muted-foreground"
+                          aria-hidden="true"
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -216,12 +176,6 @@ export default function OrdersPage() {
           )}
         </CardContent>
       </Card>
-
-      <OrderDetailDialog
-        orderId={detailId}
-        onOpenChange={(o) => !o && setDetailId(null)}
-        onUpdated={refetch}
-      />
     </div>
   )
 }

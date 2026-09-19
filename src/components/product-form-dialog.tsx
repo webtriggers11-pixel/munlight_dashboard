@@ -38,6 +38,7 @@ interface ProductFormDialogProps {
 }
 
 const NO_CAT = "none"
+const MAX_PRODUCT_IMAGES = 4
 
 interface FormState {
   name         : string
@@ -209,12 +210,16 @@ export function ProductFormDialog({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
+    if (form.images.length === 0) {
+      toast.error("At least one product image is required")
+      return
+    }
     setSaving(true)
     try {
       const base = {
         name        : form.name,
         slug        : form.slug.trim() || undefined,
-        description : form.description || undefined,
+        description : form.description || "",
         price       : Number(form.price),
         mrp         : Number(form.mrp),
         stock       : Number(form.stock),
@@ -328,10 +333,16 @@ export function ProductFormDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label>Images</Label>
+              <Label>
+                Images <span className="text-destructive">*</span>{" "}
+                <span className="text-xs text-muted-foreground font-normal">
+                  (1–{MAX_PRODUCT_IMAGES})
+                </span>
+              </Label>
               <ImageUploader
                 value={form.images}
                 onChange={(keys) => set("images", keys)}
+                max={MAX_PRODUCT_IMAGES}
               />
             </div>
           </fieldset>

@@ -3,6 +3,8 @@ import { Loader2, PlusIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import { useAsync } from "@/hooks/use-async"
+import { useDebounce } from "@/hooks/use-debounce"
+import { useAuth } from "@/lib/auth"
 import { apiErrorMessage } from "@/lib/api"
 import { formatDate, titleCase } from "@/lib/format"
 import { listUsers, toggleUserStatus } from "@/services/users"
@@ -12,6 +14,7 @@ import { ActivePill } from "@/components/status-badge"
 import { PaginationBar } from "@/components/pagination-bar"
 import { PageHeader } from "@/components/page-header"
 import { CreateAdminDialog } from "@/components/create-admin-dialog"
+import { SearchInput } from "@/components/search-input"
 import {
   Table,
   TableBody,
@@ -22,13 +25,22 @@ import {
 } from "@/components/ui/table"
 
 export default function UsersPage() {
+  const { user: currentUser } = useAuth()
+  const canManageStatus = currentUser?.role === "super_admin"
   const [page, setPage] = useState(1)
+  const [search, setSearch] = useState("")
+  const debouncedSearch = useDebounce(search, 300)
   const [busyId, setBusyId] = useState<number | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const { data, loading, error, refetch } = useAsync(
-    () => listUsers(page, 20),
-    [page]
+    () => listUsers(page, 20, debouncedSearch),
+    [page, debouncedSearch]
   )
+
+  function handleSearchChange(value: string) {
+    setSearch(value)
+    setPage(1)
+  }
 
   async function handleToggle(userId: number) {
     setBusyId(userId)
@@ -51,14 +63,24 @@ export default function UsersPage() {
         title="Customers"
         description="View customer accounts and manage admins."
         actions={
-          <Button onClick={() => setCreateOpen(true)}>
-            <PlusIcon />
-            Create admin
-          </Button>
+          canManageStatus && (
+            <Button onClick={() => setCreateOpen(true)}>
+              <PlusIcon />
+              Create admin
+            </Button>
+          )
         }
       />
       <Card>
         <CardContent className="pt-6">
+          <div className="mb-4">
+            <SearchInput
+              value={search}
+              onChange={handleSearchChange}
+              placeholder="Search by name, email, or phone…"
+            />
+          </div>
+
           {loading ? (
             <div className="flex h-48 items-center justify-center text-muted-foreground">
               <Loader2 className="size-5 animate-spin" />
@@ -66,7 +88,11 @@ export default function UsersPage() {
           ) : error ? (
             <p className="text-sm text-destructive">{error}</p>
           ) : !data || data.items.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No users found.</p>
+            <p className="text-sm text-muted-foreground">
+              {debouncedSearch
+                ? `No customers match “${debouncedSearch}”.`
+                : "No users found."}
+            </p>
           ) : (
             <>
               <Table>
@@ -77,7 +103,9 @@ export default function UsersPage() {
                     <TableHead>Role</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Joined</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    {canManageStatus && (
+                      <TableHead className="text-right">Actions</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -96,19 +124,21 @@ export default function UsersPage() {
                         <ActivePill active={user.is_active} />
                       </TableCell>
                       <TableCell>{formatDate(user.created_at)}</TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={busyId === user.id}
-                          onClick={() => handleToggle(user.id)}
-                        >
-                          {busyId === user.id && (
-                            <Loader2 className="size-4 animate-spin" />
-                          )}
-                          {user.is_active ? "Deactivate" : "Activate"}
-                        </Button>
-                      </TableCell>
+                      {canManageStatus && (
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={busyId === user.id}
+                            onClick={() => handleToggle(user.id)}
+                          >
+                            {busyId === user.id && (
+                              <Loader2 className="size-4 animate-spin" />
+                            )}
+                            {user.is_active ? "Deactivate" : "Activate"}
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>

@@ -4,6 +4,7 @@ import {
   LayoutDashboardIcon,
   ShoppingCartIcon,
   PackageIcon,
+  UploadCloudIcon,
   FolderTreeIcon,
   UsersIcon,
   GemIcon,
@@ -13,9 +14,11 @@ import {
 } from "lucide-react"
 
 import { config } from "@/constants/config"
+import { useAuth } from "@/lib/auth"
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -27,6 +30,7 @@ import {
 const navItems = [
   { title: "Dashboard",      url: "/",               icon: LayoutDashboardIcon },
   { title: "Products",       url: "/products",        icon: PackageIcon },
+  { title: "Bulk Upload",    url: "/bulk-upload",     icon: UploadCloudIcon, superAdminOnly: true },
   { title: "Categories",     url: "/categories",      icon: FolderTreeIcon },
   { title: "Orders",         url: "/orders",          icon: ShoppingCartIcon },
   { title: "Customers",      url: "/users",           icon: UsersIcon },
@@ -37,6 +41,11 @@ const navItems = [
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { pathname } = useLocation()
+  const { user } = useAuth()
+  const isSuperAdmin = user?.role === "super_admin"
+  const visibleNavItems = navItems.filter(
+    (item) => !item.superAdminOnly || isSuperAdmin
+  )
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -59,7 +68,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => {
+              {visibleNavItems.map((item) => {
                 const isActive =
                   item.url === "/"
                     ? pathname === "/"
@@ -83,6 +92,29 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="group-data-[collapsible=icon]:hidden">
+        <p className="px-2 py-1 text-[10px] leading-relaxed text-sidebar-foreground/50">
+          Developed by{' '}
+          <a
+            href="https://www.webtriggers.online/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-dotted underline-offset-2 hover:text-sidebar-foreground/80"
+          >
+            WebTriggers
+          </a>
+          <br />
+          Managed by{' '}
+          <a
+            href="https://www.maittreyadigital.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-dotted underline-offset-2 hover:text-sidebar-foreground/80"
+          >
+            Maittreya Digital
+          </a>
+        </p>
+      </SidebarFooter>
     </Sidebar>
   )
 }
