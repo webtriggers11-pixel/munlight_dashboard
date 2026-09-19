@@ -87,6 +87,12 @@ function resolveNextStep(order: OrderAdmin): NextStep {
 // The steps where an admin is expected to act — these get the emphasised card.
 const ACTIONABLE: NextStep[] = ["confirm", "push", "pickup"]
 
+// When Shiprocket books a different day than the one requested, remember it per
+// order. It lives outside the component because the order page unmounts this card
+// during every refetch, and the requested date isn't stored on the server — so it
+// lasts until the tab is reloaded.
+const pickupShifts = new Map<number, { requested: string; booked: string }>()
+
 interface Props {
   order: OrderAdmin
   onUpdated: () => void
@@ -100,6 +106,8 @@ export function OrderFulfilmentActions({ order, onUpdated }: Props) {
   )
 
   const [refundOpen, setRefundOpen] = useState(false)
+
+  const pickupShift = pickupShifts.get(order.id)
 
   const step = resolveNextStep(order)
   const busy = actionBusy !== null
@@ -162,9 +170,12 @@ export function OrderFulfilmentActions({ order, onUpdated }: Props) {
     setActionBusy("pickup")
     try {
       const updated = await schedulePickup(order.id, pickupDate)
-      onUpdated()
       const booked = updated.shipment_detail?.pickup_scheduled_date
       const bookedDay = booked ? booked.slice(0, 10) : null
+      if (bookedDay && bookedDay !== pickupDate) {
+        pickupShifts.set(order.id, { requested: pickupDate, booked: bookedDay })
+      }
+      onUpdated()
       if (bookedDay && bookedDay !== pickupDate) {
         toast.warning(
           `Requested ${formatPickupDate(pickupDate)} wasn't available — ` +
@@ -324,6 +335,11 @@ export function OrderFulfilmentActions({ order, onUpdated }: Props) {
             <span className="ml-1 text-xs text-muted-foreground">
               Sundays are skipped — most couriers don&apos;t collect then.
             </span>
+            <p className="mt-2 basis-full rounded-md bg-muted/60 p-2 text-xs text-muted-foreground">
+              Book the pickup only when the parcel is packed and ready to hand
+              over. Once booked, the date can only be changed from the Shiprocket
+              panel.
+            </p>
           </div>
         )}
 
@@ -349,6 +365,17 @@ export function OrderFulfilmentActions({ order, onUpdated }: Props) {
                 </span>
               </span>
             )}
+            {pickupShift && (
+              <p className="mt-1 basis-full rounded-md border border-amber-500/50 bg-amber-500/10 p-2 text-xs text-foreground">
+                You requested {formatPickupDate(pickupShift.requested)}, but
+                Shiprocket booked {formatPickupDate(pickupShift.booked)}.
+              </p>
+            )}
+            <p className="mt-1 basis-full text-xs text-muted-foreground">
+              Shiprocket confirms the final date. If it doesn&apos;t work for you,
+              change it in the Shiprocket panel: Orders → Ready to Ship → select
+              the order → Reschedule Pickup.
+            </p>
           </div>
         )}
       </CardContent>
