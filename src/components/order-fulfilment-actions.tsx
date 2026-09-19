@@ -12,15 +12,26 @@ import { toast } from "sonner"
 import { apiErrorMessage } from "@/lib/api"
 import { formatPickupDate, pickupDateOptions, todayISODate } from "@/lib/pickup-dates"
 import { PAYMENT_BLOCKED } from "@/lib/order-transitions"
+import { formatCurrency } from "@/lib/format"
 import {
   confirmCod,
   confirmOrder,
   createShipment,
+  markOrderRefunded,
   schedulePickup,
   syncShipmentTracking,
-  updateOrderStatus,
 } from "@/services/orders"
 import type { OrderAdmin } from "@/types/order"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
@@ -88,10 +99,18 @@ export function OrderFulfilmentActions({ order, onUpdated }: Props) {
     () => pickupOptions[0]?.value ?? todayISODate()
   )
 
+  const [refundOpen, setRefundOpen] = useState(false)
+
   const step = resolveNextStep(order)
   const busy = actionBusy !== null
+  // Cash is only collected at the door, so this is offered once the parcel is with
+  // the courier (the delivery webhook normally does it automatically).
   const canConfirmCod =
-    order.payment_method === "cod" && order.payment_status === "cod_pending"
+    order.payment_method === "cod" &&
+    order.payment_status === "cod_pending" &&
+    (order.status === "shipped" || order.status === "out_for_delivery")
+  const needsRefundRecord =
+    order.status === "cancelled" && order.payment_status === "success"
 
   async function runAction(key: string, fn: () => Promise<unknown>) {
     setActionBusy(key)
@@ -193,22 +212,17 @@ export function OrderFulfilmentActions({ order, onUpdated }: Props) {
     </Button>
   ) : null
 
-  const refundButton =
-    order.status === "delivered" || order.status === "cancelled" ? (
-      <Button
-        variant="outline"
-        className="border-destructive/35 text-destructive hover:text-destructive"
-        disabled={busy}
-        onClick={() =>
-          runAction("refund", () =>
-            updateOrderStatus(order.id, { status: "refund_initiated" })
-          )
-        }
-      >
-        {actionBusy === "refund" && <Loader2 className="animate-spin" />}
-        Start refund
-      </Button>
-    ) : null
+  // Bookkeeping only — the refund itself is done by hand in the Razorpay dashboard.
+  const markRefundedButton = needsRefundRecord ? (
+    <Button
+      variant="outline"
+      className="border-destructive/35 text-destructive hover:text-destructive"
+      disabled={busy}
+      onClick={() => setRefundOpen(true)}
+    >
+      Mark refunded
+    </Button>
+  ) : null
 
   const copy = stepCopy(order, step)
 
@@ -232,26 +246,14 @@ export function OrderFulfilmentActions({ order, onUpdated }: Props) {
 
           <div className="flex shrink-0 flex-wrap items-center gap-2">
             {step === "confirm" && (
-              <>
-                {canConfirmCod && (
-                  <Button
-                    variant="outline"
-                    disabled={busy}
-                    onClick={() => runAction("cod", () => confirmCod(order.id))}
-                  >
-                    {actionBusy === "cod" && <Loader2 className="animate-spin" />}
-                    Confirm COD collected
-                  </Button>
+              <Button disabled={busy} onClick={handleConfirmAndShip}>
+                {actionBusy === "confirm" || actionBusy === "shipment" ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <TruckIcon />
                 )}
-                <Button disabled={busy} onClick={handleConfirmAndShip}>
-                  {actionBusy === "confirm" || actionBusy === "shipment" ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <TruckIcon />
-                  )}
-                  Confirm &amp; create shipment
-                </Button>
-              </>
+                Confirm &amp; create shipment
+              </Button>
             )}
 
             {step === "push" && (
@@ -285,21 +287,20 @@ export function OrderFulfilmentActions({ order, onUpdated }: Props) {
               <>
                 {trackButton}
                 {syncButton}
+                {canConfirmCod && (
+                  <Button
+                    variant="outline"
+                    disabled={busy}
+                    onClick={() => runAction("cod", () => confirmCod(order.id))}
+                  >
+                    {actionBusy === "cod" && <Loader2 className="animate-spin" />}
+                    Confirm COD collected
+                  </Button>
+                )}
               </>
             )}
 
-            {(step === "complete" || step === "closed") && refundButton}
-
-            {step === "blocked" && canConfirmCod && (
-              <Button
-                variant="outline"
-                disabled={busy}
-                onClick={() => runAction("cod", () => confirmCod(order.id))}
-              >
-                {actionBusy === "cod" && <Loader2 className="animate-spin" />}
-                Confirm COD collected
-              </Button>
-            )}
+            {step === "closed" && markRefundedButton}
           </div>
         </div>
 
@@ -351,6 +352,34 @@ export function OrderFulfilmentActions({ order, onUpdated }: Props) {
           </div>
         )}
       </CardContent>
+
+      <AlertDialog open={refundOpen} onOpenChange={setRefundOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Mark as refunded?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Only confirm this if you have already refunded{" "}
+              {formatCurrency(order.total)} for {order.order_number} in the
+              Razorpay dashboard. This just records it — nothing is sent to
+              Razorpay from here.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={busy}>Not yet</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={busy}
+              onClick={async (e) => {
+                e.preventDefault()
+                await runAction("refund", () => markOrderRefunded(order.id))
+                setRefundOpen(false)
+              }}
+            >
+              {actionBusy === "refund" && <Loader2 className="size-4 animate-spin" />}
+              Yes, it’s refunded
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   )
 }
@@ -391,29 +420,57 @@ function stepCopy(
         description:
           "Nothing to do here — the next status arrives on the Shiprocket webhook. Sync tracking pulls it manually if a webhook is missed.",
       }
-    case "in_transit":
+    case "in_transit": {
+      const courier = order.shipment_detail?.shipment_status
+      if (courier === "delivery_failed") {
+        return {
+          title: "Delivery attempt failed",
+          description:
+            "The courier will retry or send the parcel back. Check the tracking, and contact the customer if the address or phone number is wrong.",
+        }
+      }
+      if (courier === "rto_initiated") {
+        return {
+          title: "Parcel is returning to you",
+          description:
+            "The courier is sending it back. Once it arrives, cancel the order from the Order status card to return the items to stock, then refund the customer in Razorpay.",
+        }
+      }
+      if (courier === "rto_delivered") {
+        return {
+          title: "Parcel is back with you",
+          description:
+            "Cancel the order from the Order status card to return the items to stock, then refund the customer in the Razorpay dashboard and mark it refunded.",
+        }
+      }
       return {
         title: "In transit — nothing due",
         description:
           "Shipped, Out for delivery and Delivered are set by the courier webhook. Sync tracking is the manual fallback.",
       }
+    }
     case "complete":
       return {
         title: "Order complete",
-        description:
-          "Delivered. COD orders are marked collected automatically on delivery. A refund can still be started from here.",
+        description: "Delivered. There is nothing more to do on this order.",
       }
-    case "closed":
+    case "closed": {
+      const owesRefund =
+        order.status === "cancelled" && order.payment_status === "success"
+      if (owesRefund) {
+        return {
+          title: "Cancelled — refund the customer",
+          description: `The customer paid ${formatCurrency(order.total)}. Refund it in the Razorpay dashboard (Payments → open the payment → Refund), then click Mark refunded here so it leaves the attention list.`,
+        }
+      }
       return {
-        title:
-          order.status === "cancelled"
-            ? "Cancelled — settle the money"
-            : "Refund in progress",
+        title: "Cancelled",
         description:
-          order.status === "refunded"
-            ? "This order is fully refunded and closed."
-            : "Fulfilment actions are finished for this order. Move it through Refund initiated → Refunded from the Order status card.",
+          order.payment_status === "refunded"
+            ? "Cancelled and the payment has been refunded."
+            : "This order is cancelled. No payment was taken, so nothing is owed.",
       }
+    }
     default:
       return {
         title: "No action due",

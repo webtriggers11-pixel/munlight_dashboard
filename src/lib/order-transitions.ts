@@ -1,5 +1,7 @@
 import type { OrderStatus, PaymentStatus } from "@/types/common"
 
+// Refund statuses are deliberately absent: refunds aren't supported yet (nothing
+// is sent to Razorpay), so no order can be moved into them.
 export const ALL_ORDER_STATUSES: OrderStatus[] = [
   "pending",
   "placed",
@@ -9,8 +11,6 @@ export const ALL_ORDER_STATUSES: OrderStatus[] = [
   "out_for_delivery",
   "delivered",
   "cancelled",
-  "refund_initiated",
-  "refunded",
 ]
 
 // Statuses that block payment — cannot confirm
@@ -21,9 +21,8 @@ export const PAYMENT_BLOCKED: PaymentStatus[] = ["pending", "failed", "cancelled
 // shipped / out_for_delivery / delivered are no longer manually settable here —
 // they now advance automatically from Shiprocket's own status via the webhook
 // (or a manual "Sync tracking" pull as fallback). Manually setting them risked
-// getting out of sync with the real courier status, and "delivered" also
-// triggers auto-mark-COD-as-collected — that should only fire on a real
-// delivery confirmation, not a manual click.
+// getting out of sync with the real courier status.
+// Delivered and cancelled are final.
 //
 // Mirrors _ALLOWED_TRANSITIONS in the API's order_service.py — keep both in step.
 export const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
@@ -33,16 +32,26 @@ export const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   processing:       ["cancelled"],
   shipped:          [],
   out_for_delivery: [],
-  delivered:        ["refund_initiated"],
-  cancelled:        ["refund_initiated"],
-  refund_initiated: ["refunded"],
+  delivered:        [],
+  cancelled:        [],
+  refund_initiated: [],
   refunded:         [],
 }
 
 export function getAllowedStatuses(order: {
   status: OrderStatus
   payment_status: PaymentStatus
+  shipment_status?: string | null
 }): OrderStatus[] {
+  // The courier brought the parcel back undelivered: cancelling closes the order
+  // out and returns the items to stock (the API allows exactly this one move).
+  if (
+    (order.status === "shipped" || order.status === "out_for_delivery") &&
+    order.shipment_status === "rto_delivered"
+  ) {
+    return ["cancelled"]
+  }
+
   const base = ALLOWED_TRANSITIONS[order.status] ?? []
   // If payment is not resolved, block confirm even though placed → confirmed
   // is already excluded above; also block any forward moves for pending orders

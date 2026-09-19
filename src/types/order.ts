@@ -36,12 +36,31 @@ export interface Order {
   courier_name: string | null
   estimated_delivery: string | null
   tracking_url: string | null
+  shipment_status: string | null
   confirmed_at: string | null
   shipped_at: string | null
   delivered_at: string | null
   cancelled_at: string | null
   items: OrderItem[]
   created_at: string
+}
+
+export type AttentionKind =
+  | "refund_needed"
+  | "delivery_failed"
+  | "rto_initiated"
+  | "rto_delivered"
+  | "shipment_incomplete"
+
+export interface AttentionItem {
+  order_id: number
+  order_number: string
+  customer: string
+  total: number
+  kind: AttentionKind
+  title: string
+  detail: string
+  since: string | null
 }
 
 export interface OrderStatusUpdate {
