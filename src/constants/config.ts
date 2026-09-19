@@ -3,7 +3,7 @@ export const config = {
   brand: {
     name: "Munlight Blue",
     shortName: "Munlight",
-    tagline: "Admin",
+    tagline: "Admin Dashboard",
   },
   // Token keys are owned by lib/api.ts; mirrored here for reference.
   storage: {

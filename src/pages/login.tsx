@@ -4,7 +4,7 @@ import {
   ArrowRightIcon,
   EyeIcon,
   EyeOffIcon,
-  GemIcon,
+  LayoutGridIcon,
   Loader2,
   LockIcon,
   MailIcon,
@@ -48,10 +48,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-lg">
         <div className="mb-8 flex flex-col items-center gap-3">
           <div className="flex size-12 items-center justify-center rounded-md bg-muted text-muted-foreground">
-            <GemIcon className="size-6" />
+            <LayoutGridIcon className="size-6" />
           </div>
           <h1 className="text-xl font-semibold text-card-foreground">
-            Admin Portal
+            Admin Dashboard
           </h1>
         </div>
 

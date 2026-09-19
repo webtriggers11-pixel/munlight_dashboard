@@ -2,12 +2,12 @@ import * as React from "react"
 import { NavLink, useLocation } from "react-router-dom"
 import {
   LayoutDashboardIcon,
+  LayoutGridIcon,
   ShoppingCartIcon,
   PackageIcon,
   UploadCloudIcon,
   FolderTreeIcon,
   UsersIcon,
-  GemIcon,
   StoreIcon,
   CreditCardIcon,
   TruckIcon,
@@ -52,14 +52,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-2">
         <div className="flex items-center gap-3">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-sidebar-accent text-sidebar-accent-foreground">
-            <GemIcon className="size-5" />
+            <LayoutGridIcon className="size-5" />
           </div>
           <div className="flex flex-col group-data-[collapsible=icon]:hidden">
             <span className="text-base font-semibold leading-tight text-sidebar-primary">
               {config.brand.name}
             </span>
             <span className="text-xs text-sidebar-foreground/70">
-              Premium Jewellery
+              {config.brand.tagline}
             </span>
           </div>
         </div>

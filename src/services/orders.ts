@@ -105,6 +105,23 @@ export async function syncShipmentTracking(
   return getAdminOrder(orderId)
 }
 
+// Shipment documents. Each returns a Shiprocket-hosted PDF URL, generated on
+// demand. Preconditions the API enforces:
+//   label    — AWB assigned
+//   invoice  — shipment exists in Shiprocket
+//   manifest — shipment exists in Shiprocket (generated on first request)
+export type ShipmentDocument = "label" | "invoice" | "manifest"
+
+export async function getShipmentDocumentUrl(
+  orderId: number,
+  doc: ShipmentDocument
+): Promise<string> {
+  const { data } = await api.get<ApiEnvelope<{ url: string }>>(
+    `/shipping/${doc}/${orderId}`
+  )
+  return data.data.url
+}
+
 // Schedules a Shiprocket pickup for a shipment that already has an AWB.
 // pickupDate must be YYYY-MM-DD. Lives on the /shipping router, not /orders.
 export async function schedulePickup(
