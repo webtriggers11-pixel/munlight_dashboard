@@ -15,9 +15,14 @@ export function DashboardLayout() {
       }
     >
       <AppSidebar />
-      <SidebarInset>
+      {/* min-w-0: SidebarInset carries `w-full`, which also becomes its automatic
+          minimum size as a flex item. Without this it can never shrink below the
+          full wrapper width, so any page wider than the space left by the sidebar
+          (a wide table, for example) pushes the whole document 240px wide instead
+          of scrolling inside its own container. */}
+      <SidebarInset className="min-w-0">
         <SiteHeader />
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <main className="min-w-0 flex-1 overflow-y-auto p-6 lg:p-8">
           <Outlet />
         </main>
       </SidebarInset>
