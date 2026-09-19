@@ -12,7 +12,6 @@ import {
   testShippingConfig,
   updateShippingConfig,
 } from "@/services/shipping-config"
-import { registerShiprocketWebhook } from "@/services/webhooks"
 import type { ShippingConfig } from "@/types/shipping-config"
 import { ShippingConfigFormDialog } from "@/components/shipping-config-form-dialog"
 import { MaskedSecretInput } from "@/components/masked-secret-input"
@@ -33,13 +32,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -72,7 +64,7 @@ export default function ShippingPage() {
           <ProvidersTab />
         </TabsContent>
         <TabsContent value="webhooks" className="mt-4">
-          <WebhooksTab />
+          <ShiprocketWebhookCard />
         </TabsContent>
       </Tabs>
     </div>
@@ -239,78 +231,6 @@ function ProvidersTab() {
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
-}
-
-function WebhooksTab() {
-  const [webhookUrl, setWebhookUrl] = useState(SHIPROCKET_WEBHOOK_URL)
-  const [configId, setConfigId] = useState<string>("")
-  const [registering, setRegistering] = useState(false)
-  const { data: configs, loading } = useAsync(listShippingConfigs, [])
-
-  async function handleRegister() {
-    if (!configId) { toast.error("Select a shipping config first"); return }
-    setRegistering(true)
-    try {
-      await registerShiprocketWebhook(Number(configId), webhookUrl.trim())
-      toast.success("Webhook registered with Shiprocket")
-    } catch (err) {
-      toast.error(apiErrorMessage(err))
-    } finally {
-      setRegistering(false)
-    }
-  }
-
-  return (
-    <div className="grid gap-6">
-    <ShiprocketWebhookCard />
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Register via API (advanced)</CardTitle>
-      </CardHeader>
-      <CardContent className="grid max-w-xl gap-4">
-        <p className="text-sm text-muted-foreground">
-          Register your public webhook URL with Shiprocket so tracking updates flow
-          automatically. The webhook secret is saved to the shipping config.
-        </p>
-        <div className="rounded-lg border bg-muted/40 p-3 font-mono text-xs">
-          POST {webhookUrl || "/api/webhooks/shiprocket"}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="wh-url">Public webhook URL</Label>
-          <Input
-            id="wh-url"
-            value={webhookUrl}
-            onChange={(e) => setWebhookUrl(e.target.value)}
-            placeholder="https://api.yourdomain.com/api/webhooks/shiprocket"
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label>Shipping config</Label>
-          {loading ? (
-            <Spinner />
-          ) : (
-            <Select value={configId} onValueChange={setConfigId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Shiprocket config" />
-              </SelectTrigger>
-              <SelectContent>
-                {(configs ?? []).map((c) => (
-                  <SelectItem key={c.id} value={String(c.id)}>
-                    {c.display_name} ({c.provider})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        </div>
-        <Button onClick={handleRegister} disabled={registering || !configId} className="w-fit">
-          {registering && <Loader2 className="size-4 animate-spin" />}
-          Register with Shiprocket
-        </Button>
-      </CardContent>
-    </Card>
-    </div>
   )
 }
 
