@@ -207,6 +207,14 @@ function OrderDetailBody({
   const pickupScheduled =
     order?.shipment_detail?.shipment_status === "pickup_scheduled"
 
+  // Manifest needs a booked pickup: any status from "pickup scheduled" onward
+  // (picked up, in transit, delivered, RTO…), but not before or after a cancel.
+  const pickupBooked =
+    !!order?.shipment_detail?.awb_number &&
+    !["not_created", "label_created", "cancelled"].includes(
+      order.shipment_detail.shipment_status
+    )
+
   return (
     <>
       {loading ? (
@@ -406,7 +414,7 @@ function OrderDetailBody({
                     <p className="mt-1 text-xs text-muted-foreground">
                       Print the invoice and put it in the box, and stick the
                       label on the outside before the courier arrives.
-                      {!pickupScheduled &&
+                      {!pickupBooked &&
                         " The manifest is available once pickup is scheduled."}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -414,7 +422,7 @@ function OrderDetailBody({
                         [
                           ["label", "Download label"],
                           ["invoice", "Download invoice"],
-                          ...(pickupScheduled
+                          ...(pickupBooked
                             ? [["manifest", "Download manifest"]]
                             : []),
                         ] as [ShipmentDocument, string][]
