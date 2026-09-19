@@ -1,12 +1,23 @@
-import { useState } from "react"
-import { Loader2, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react"
+import { useEffect, useState } from "react"
+import {
+  CopyIcon,
+  Loader2,
+  PencilIcon,
+  PlusIcon,
+  Trash2Icon,
+} from "lucide-react"
 import { toast } from "sonner"
 
 import { useAsync } from "@/hooks/use-async"
 import { apiErrorMessage } from "@/lib/api"
-import { deleteGateway, listGateways } from "@/services/gateway-config"
+import {
+  deleteGateway,
+  listGateways,
+  updateGateway,
+} from "@/services/gateway-config"
 import type { GatewayConfig } from "@/types/gateway"
 import { GatewayFormDialog } from "@/components/gateway-form-dialog"
+import { MaskedSecretInput } from "@/components/masked-secret-input"
 import { PageHeader } from "@/components/page-header"
 import { ActivePill } from "@/components/status-badge"
 import {
@@ -22,6 +33,8 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Table,
   TableBody,
@@ -30,8 +43,38 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+const API_URL = (
+  import.meta.env.VITE_API_URL ?? "http://localhost:8000/api"
+).replace(/\/$/, "")
+
+const RAZORPAY_WEBHOOK_URL = `${API_URL}/webhooks/razorpay`
 
 export default function PaymentsPage() {
+  return (
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        title="Payment Gateways"
+        description="Manage Razorpay credentials and payment webhooks."
+      />
+      <Tabs defaultValue="gateways">
+        <TabsList>
+          <TabsTrigger value="gateways">Gateways</TabsTrigger>
+          <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+        </TabsList>
+        <TabsContent value="gateways" className="mt-4">
+          <GatewaysTab />
+        </TabsContent>
+        <TabsContent value="webhooks" className="mt-4">
+          <WebhooksTab />
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
+
+function GatewaysTab() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<GatewayConfig | null>(null)
   const [deleting, setDeleting] = useState<GatewayConfig | null>(null)
@@ -54,11 +97,10 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Payment Gateways"
-        description="Manage Razorpay and other payment provider credentials."
-        actions={
+    <>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardTitle className="text-base">Configured gateways</CardTitle>
           <Button
             size="sm"
             onClick={() => {
@@ -69,12 +111,6 @@ export default function PaymentsPage() {
             <PlusIcon />
             Add gateway
           </Button>
-        }
-      />
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Configured gateways</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -107,9 +143,7 @@ export default function PaymentsPage() {
                     <TableCell className="font-mono text-xs">{gw.key_secret}</TableCell>
                     <TableCell>
                       {gw.webhook_secret ? (
-                        <Badge variant="secondary">
-                          Secret set · {gw.webhook_secret.slice(-4)}
-                        </Badge>
+                        <Badge variant="secondary">Secret set</Badge>
                       ) : gw.gateway === "razorpay" ? (
                         <Badge variant="outline">Not configured</Badge>
                       ) : (
@@ -174,7 +208,129 @@ export default function PaymentsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </>
+  )
+}
+
+function WebhooksTab() {
+  const { data, loading, error, refetch } = useAsync(listGateways, [])
+  const razorpay = data?.find((g) => g.gateway === "razorpay")
+  const [webhookSecret, setWebhookSecret] = useState("")
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    setWebhookSecret(razorpay?.webhook_secret ?? "")
+  }, [razorpay?.id, razorpay?.webhook_secret])
+
+  async function copyUrl() {
+    try {
+      await navigator.clipboard.writeText(RAZORPAY_WEBHOOK_URL)
+      toast.success("Webhook URL copied")
+    } catch {
+      toast.error("Could not copy — select the URL and copy it manually")
+    }
+  }
+
+  async function handleSave() {
+    if (!razorpay) return
+    setSaving(true)
+    try {
+      await updateGateway(razorpay.id, { webhook_secret: webhookSecret })
+      toast.success("Webhook secret saved")
+      refetch()
+    } catch (err) {
+      toast.error(apiErrorMessage(err))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const changed =
+    !!webhookSecret.trim() && webhookSecret !== razorpay?.webhook_secret
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Razorpay webhook</CardTitle>
+      </CardHeader>
+      <CardContent className="grid max-w-xl gap-4">
+        <p className="text-sm text-muted-foreground">
+          Razorpay calls this URL when a payment is captured or fails, so orders
+          are marked paid even if the customer closes the browser after paying.
+          Add it in Razorpay Dashboard → Account &amp; Settings → Webhooks, using
+          the same secret you save below.
+        </p>
+        <div className="rounded-lg border bg-muted/40 p-3 font-mono text-xs">
+          POST {RAZORPAY_WEBHOOK_URL}
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="wh-url">Webhook URL</Label>
+          <div className="flex gap-2">
+            <Input
+              id="wh-url"
+              readOnly
+              value={RAZORPAY_WEBHOOK_URL}
+              className="font-mono text-xs"
+              onFocus={(e) => e.currentTarget.select()}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              aria-label="Copy webhook URL"
+              onClick={copyUrl}
+            >
+              <CopyIcon />
+            </Button>
+          </div>
+        </div>
+
+        {loading ? (
+          <Spinner />
+        ) : error ? (
+          <p className="text-sm text-destructive">{error}</p>
+        ) : !razorpay ? (
+          <p className="text-sm text-muted-foreground">
+            Add a Razorpay gateway in the Gateways tab first, then come back to
+            set its webhook secret.
+          </p>
+        ) : (
+          <>
+            <div className="grid gap-2">
+              <Label htmlFor="wh-secret">Webhook secret</Label>
+              <MaskedSecretInput
+                id="wh-secret"
+                value={webhookSecret}
+                onChange={setWebhookSecret}
+                saved={razorpay.webhook_secret}
+                placeholder="Enter the secret you set in Razorpay"
+              />
+              <p className="text-xs text-muted-foreground">
+                Not the same as the Key secret. It must match the secret typed
+                into the Razorpay webhook form exactly.
+              </p>
+            </div>
+            <div className="rounded-lg border p-3 text-xs text-muted-foreground">
+              <p className="font-medium text-foreground">
+                Events to enable in Razorpay
+              </p>
+              <ul className="mt-1 list-inside list-disc font-mono">
+                <li>payment.captured</li>
+                <li>payment.failed</li>
+              </ul>
+            </div>
+            <Button
+              onClick={handleSave}
+              disabled={saving || !changed}
+              className="w-fit"
+            >
+              {saving && <Loader2 className="size-4 animate-spin" />}
+              Save webhook secret
+            </Button>
+          </>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 

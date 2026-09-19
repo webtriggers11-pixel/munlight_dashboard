@@ -10,7 +10,9 @@ import {
 import type {
   ShippingConfig,
   ShippingConfigCreate,
+  ShippingConfigUpdate,
 } from "@/types/shipping-config"
+import { MaskedSecretInput } from "@/components/masked-secret-input"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -51,7 +53,7 @@ export function ShippingConfigFormDialog({
     setProvider(config?.provider ?? "shiprocket")
     setDisplayName(config?.display_name ?? "")
     setEmail(config?.email ?? "")
-    setPassword("")
+    setPassword(config?.password ?? "")
     setIsActive(config?.is_active ?? false)
     setIsTestMode(config?.is_test_mode ?? true)
   }, [open, config])
@@ -61,13 +63,16 @@ export function ShippingConfigFormDialog({
     setSaving(true)
     try {
       if (isEdit && config) {
-        const payload: Record<string, unknown> = {
+        const payload: ShippingConfigUpdate = {
           display_name: displayName,
           email,
           is_active: isActive,
           is_test_mode: isTestMode,
         }
-        if (password.trim()) payload.password = password
+        // The field is pre-filled with the masked value — only send a real change.
+        if (password.trim() && password !== config.password) {
+          payload.password = password
+        }
         await updateShippingConfig(config.id, payload)
         toast.success("Shipping config updated")
       } else {
@@ -99,7 +104,8 @@ export function ShippingConfigFormDialog({
             {isEdit ? "Edit shipping provider" : "Add shipping provider"}
           </DialogTitle>
           <DialogDescription>
-            Shiprocket API credentials. Password is masked after save.
+            Shiprocket API credentials. The password is shown masked — click it
+            and type to replace it, or leave it as is to keep the current value.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4">
@@ -135,16 +141,12 @@ export function ShippingConfigFormDialog({
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="sp-password">
-              API password{isEdit ? " (optional)" : ""}
-            </Label>
-            <Input
+            <Label htmlFor="sp-password">API password</Label>
+            <MaskedSecretInput
               id="sp-password"
-              type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={isEdit ? "Leave blank to keep current" : undefined}
-              required={!isEdit}
+              onChange={setPassword}
+              saved={config?.password}
             />
           </div>
           <div className="flex flex-wrap gap-6">
@@ -161,7 +163,7 @@ export function ShippingConfigFormDialog({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={saving}>
+            <Button type="submit" disabled={saving || !password.trim()}>
               {saving && <Loader2 className="size-4 animate-spin" />}
               {isEdit ? "Save" : "Create"}
             </Button>
