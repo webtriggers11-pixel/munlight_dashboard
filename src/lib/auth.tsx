@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react"
 
-import { clearToken, setToken } from "@/lib/api"
+import { api, clearToken, setToken } from "@/lib/api"
 import { config } from "@/constants/config"
 import { adminLogin } from "@/services/auth"
 import type { User } from "@/types/user"
@@ -41,6 +41,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const logout = useCallback(() => {
+    // Also end the session on the server (revokes the refresh cookie). Best effort:
+    // signing out locally never waits on the network.
+    api.post("/auth/logout").catch(() => {})
     clearToken()
     localStorage.removeItem(config.storage.userKey)
     setUser(null)
