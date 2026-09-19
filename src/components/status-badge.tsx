@@ -26,6 +26,36 @@ const PAYMENT_VARIANTS: Partial<Record<PaymentStatus, BadgeVariant>> = {
   partial_refund: "destructive",
 }
 
+const SHIPMENT_VARIANTS: Record<string, BadgeVariant> = {
+  delivered: "default",
+  in_transit: "secondary",
+  out_for_delivery: "secondary",
+  picked_up: "secondary",
+  pickup_scheduled: "secondary",
+  delivery_failed: "destructive",
+  rto_initiated: "destructive",
+  rto_delivered: "destructive",
+  cancelled: "destructive",
+}
+
+const SHIPMENT_LABELS: Record<string, string> = {
+  rto_initiated: "Returning (RTO)",
+  rto_delivered: "Returned (RTO)",
+}
+
+// The courier's view of an order — separate from the order's own status, so a
+// parcel that failed delivery or is coming back is visible in the list.
+export function ShipmentStatusBadge({ status }: { status: string | null }) {
+  if (!status || status === "not_created") {
+    return <span className="text-muted-foreground">—</span>
+  }
+  return (
+    <Badge variant={SHIPMENT_VARIANTS[status] ?? "outline"}>
+      {SHIPMENT_LABELS[status] ?? titleCase(status)}
+    </Badge>
+  )
+}
+
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
   return (
     <Badge variant={ORDER_VARIANTS[status] ?? "outline"} className="capitalize">

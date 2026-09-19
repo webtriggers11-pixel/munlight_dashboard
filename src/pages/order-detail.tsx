@@ -798,8 +798,15 @@ function StatusCard({
           <AlertDialogHeader>
             <AlertDialogTitle>Cancel this order?</AlertDialogTitle>
             <AlertDialogDescription>
-              {order.order_number} will be cancelled and any pending payment
-              marked cancelled. This can’t be undone.
+              {order.order_number} will be cancelled and its items returned to
+              stock. This can’t be undone.
+              {order.payment_status === "success" && (
+                <span className="mt-2 block font-medium text-destructive">
+                  The customer has already paid. Cancelling does NOT send a
+                  refund — you will need to refund the payment in the Razorpay
+                  dashboard, then mark it refunded here.
+                </span>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

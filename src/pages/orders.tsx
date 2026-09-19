@@ -11,7 +11,9 @@ import type { OrderStatus } from "@/types/common"
 import {
   OrderStatusBadge,
   PaymentStatusBadge,
+  ShipmentStatusBadge,
 } from "@/components/status-badge"
+import { NeedsAttentionCard } from "@/components/needs-attention-card"
 import { Card, CardContent } from "@/components/ui/card"
 import { PaginationBar } from "@/components/pagination-bar"
 import { PageHeader } from "@/components/page-header"
@@ -84,6 +86,8 @@ export default function OrdersPage() {
         }
       />
 
+      <NeedsAttentionCard />
+
       <Card>
         <CardContent className="pt-6">
           <div className="mb-4">
@@ -118,6 +122,7 @@ export default function OrdersPage() {
                     <TableHead>Payment</TableHead>
                     <TableHead className="text-right">Total</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Shipment</TableHead>
                     <TableHead className="w-10" />
                   </TableRow>
                 </TableHeader>
@@ -155,6 +160,9 @@ export default function OrdersPage() {
                       </TableCell>
                       <TableCell>
                         <OrderStatusBadge status={order.status} />
+                      </TableCell>
+                      <TableCell>
+                        <ShipmentStatusBadge status={order.shipment_status} />
                       </TableCell>
                       <TableCell>
                         <ChevronRightIcon

@@ -5,7 +5,27 @@ import type {
   Paginated,
   PaginatedEnvelope,
 } from "@/types/common"
-import type { Order, OrderAdmin, OrderStatusUpdate } from "@/types/order"
+import type {
+  AttentionItem,
+  Order,
+  OrderAdmin,
+  OrderStatusUpdate,
+} from "@/types/order"
+
+// Orders that need a human decision: refunds owed, courier problems.
+export async function getAttentionOrders(): Promise<AttentionItem[]> {
+  const { data } = await api.get<ApiEnvelope<AttentionItem[]>>("/orders/attention")
+  return data.data
+}
+
+// Bookkeeping only: records that the payment was already refunded in the
+// Razorpay dashboard. Nothing is sent to Razorpay from here.
+export async function markOrderRefunded(orderId: number): Promise<OrderAdmin> {
+  const { data } = await api.patch<ApiEnvelope<OrderAdmin>>(
+    `/orders/${orderId}/mark-refunded`
+  )
+  return data.data
+}
 
 export async function listOrders(
   page = 1,
@@ -83,19 +103,6 @@ export async function syncShipmentTracking(
 ): Promise<OrderAdmin> {
   await api.post(`/orders/${orderId}/shipment/sync`)
   return getAdminOrder(orderId)
-}
-
-// Each returns a Shiprocket-hosted PDF URL for the order's shipment.
-export type ShipmentDocument = "label" | "invoice" | "manifest"
-
-export async function getShipmentDocumentUrl(
-  orderId: number,
-  document: ShipmentDocument
-): Promise<string> {
-  const { data } = await api.get<ApiEnvelope<{ url: string }>>(
-    `/shipping/${document}/${orderId}`
-  )
-  return data.data.url
 }
 
 // Schedules a Shiprocket pickup for a shipment that already has an AWB.
