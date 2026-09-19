@@ -30,3 +30,17 @@ export function titleCase(value: string): string {
     .replace(/_/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase())
 }
+
+// "17 Sep 2026, 9:42 pm" — used where the exact time matters (order timelines).
+export function formatDateTime(value: string | null): string {
+  if (!value) return "—"
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return "—"
+  return d.toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  })
+}
