@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 const KIND_VARIANT: Record<AttentionKind, "destructive" | "secondary"> = {
   refund_needed: "destructive",
+  oversold: "destructive",
   delivery_failed: "destructive",
   rto_initiated: "secondary",
   rto_delivered: "destructive",

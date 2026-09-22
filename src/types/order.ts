@@ -47,6 +47,7 @@ export interface Order {
 
 export type AttentionKind =
   | "refund_needed"
+  | "oversold"
   | "delivery_failed"
   | "rto_initiated"
   | "rto_delivered"
